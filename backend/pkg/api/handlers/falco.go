@@ -49,27 +49,6 @@ func HandleFalcoWebhook(c *fiber.Ctx) error {
 		ContainerName: containerName,
 	}
 
-	// Dacă avem k8s pod/ns, pornim K8s Correlator (Analiză statică on-the-fly)
-	if podName != "" && namespace != "" {
-		if k8s.Clientset != nil {
-			manifestYAML, err := k8s.FetchPodManifest(namespace, podName)
-			if err != nil {
-				log.Printf("Could not fetch manifest for %s/%s: %v", namespace, podName, err)
-			} else {
-				alertRecord.ManifestYAML = manifestYAML
-				alertRecord.VulnerableLines = k8s.AnalyzeManifest(manifestYAML)
-			}
-		} else {
-			log.Println("K8s Clientset is nil, skipping static analysis.")
-		}
-	}
-
-	// Salvăm în baza de date
-	if err := db.DB.Create(&alertRecord).Error; err != nil {
-		log.Printf("Failed to save alert: %v", err)
-		return customErrors.GlobalErrorHandler(c, err)
-	}
-
 	// ⏳ Forward Payload -> Falco Talon async
 	talonURL := os.Getenv("TALON_WEBHOOK_URL")
 	if talonURL == "" {
@@ -80,10 +59,37 @@ func HandleFalcoWebhook(c *fiber.Ctx) error {
 	bodyCopy := make([]byte, len(rawBody))
 	copy(bodyCopy, rawBody)
 
-	go func(body []byte, url string) {
+	// Trimitem răspunsul către Falco imediat pentru a evita HTTP timeouts (deoarece DB insert sau k8s api pot fi lente)
+	err := c.JSON(fiber.Map{"success": true, "status": "processing_async"})
+
+	// Preluăm procesarea grea într-un Goroutine
+	go func(alertRec models.AlertModel, body []byte, url string, ns string, pod string) {
+		// Dacă avem k8s pod/ns, pornim K8s Correlator (Analiză statică on-the-fly)
+		if pod != "" && ns != "" {
+			if k8s.Clientset != nil {
+				manifestYAML, err := k8s.FetchPodManifest(ns, pod)
+				if err != nil {
+					log.Printf("Could not fetch manifest for %s/%s: %v", ns, pod, err)
+				} else {
+					alertRec.ManifestYAML = manifestYAML
+					alertRec.VulnerableLines = k8s.AnalyzeManifest(manifestYAML)
+				}
+			} else {
+				log.Println("K8s Clientset is nil, skipping static analysis.")
+			}
+		}
+
+		// Salvăm în baza de date
+		if err := db.DB.Create(&alertRec).Error; err != nil {
+			log.Printf("Failed to save alert: %v", err)
+		} else {
+			log.Printf("Ingested Falco Alert for Pod: %s (ID: %d)", pod, alertRec.ID)
+		}
+
+		// Trimitem către Talon
 		client := &http.Client{Timeout: 10 * time.Second}
-		httpReq, err := http.NewRequest("POST", url, bytes.NewBuffer(body))
-		if err == nil {
+		httpReq, reqErr := http.NewRequest("POST", url, bytes.NewBuffer(body))
+		if reqErr == nil {
 			httpReq.Header.Set("Content-Type", "application/json")
 			resp, reqErr := client.Do(httpReq)
 			if reqErr == nil {
@@ -93,10 +99,9 @@ func HandleFalcoWebhook(c *fiber.Ctx) error {
 				log.Printf("Failed forwarding alert to Talon: %v", reqErr)
 			}
 		}
-	}(bodyCopy, talonURL)
+	}(alertRecord, bodyCopy, talonURL, namespace, podName)
 
-	log.Printf("Ingested Falco Alert for Pod: %s", podName)
-	return c.JSON(fiber.Map{"success": true, "id": alertRecord.ID})
+	return err
 }
 
 // HandleTalonWebhook primește acțiunile executate de Falco Talon
