@@ -8,11 +8,11 @@ import (
 
 // FalcoAlert reprezintă structura payload-ului JSON venit prin webhook de la Falco.
 type FalcoAlert struct {
-	Output       string            `json:"output"`
-	Priority     string            `json:"priority"`
-	Rule         string            `json:"rule"`
-	Time         string            `json:"time"`
-	OutputFields map[string]string `json:"output_fields"`
+	Output       string                 `json:"output"`
+	Priority     string                 `json:"priority"`
+	Rule         string                 `json:"rule"`
+	Time         string                 `json:"time"`
+	OutputFields map[string]interface{} `json:"output_fields"`
 }
 
 // AlertModel este entitatea stocată în baza de date.

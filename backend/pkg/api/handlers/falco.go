@@ -28,10 +28,18 @@ func HandleFalcoWebhook(c *fiber.Ctx) error {
 	}
 
 	// Extragem namespace și pod_name
-	namespace := payload.OutputFields["k8s.ns.name"]
-	podName := payload.OutputFields["k8s.pod.name"]
-	containerName := payload.OutputFields["k8s.container.name"]
-
+	var namespace, podName, containerName string
+	if val, ok := payload.OutputFields["k8s.ns.name"].(string); ok {
+		namespace = val
+	}
+	if val, ok := payload.OutputFields["k8s.pod.name"].(string); ok {
+		podName = val
+	}
+	if val, ok := payload.OutputFields["k8s.container.name"].(string); ok {
+		containerName = val
+	} else if val, ok := payload.OutputFields["container.name"].(string); ok {
+		containerName = val
+	}
 	alertRecord := models.AlertModel{
 		Priority:      payload.Priority,
 		Rule:          payload.Rule,
@@ -156,8 +164,7 @@ func TriggerManualAction(c *fiber.Ctx) error {
 		Priority: "Critical",
 		Rule:     "Manual Override: " + req.Action,
 		Time:     time.Now().Format(time.RFC3339),
-		OutputFields: map[string]string{
-			"k8s.ns.name":        alert.Namespace,
+		OutputFields: map[string]interface{}{
 			"k8s.pod.name":       alert.PodName,
 			"k8s.container.name": alert.ContainerName,
 		},
