@@ -1,0 +1,11 @@
+{{- if .Values.postgresql.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-postgresql-init
+  labels:
+    app: falcosight-postgresql
+data:
+  init.sql: |-
+    CREATE EXTENSION IF NOT EXISTS timescaledb;
+{{- end }}

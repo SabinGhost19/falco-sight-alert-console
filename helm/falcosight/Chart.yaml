@@ -1,0 +1,6 @@
+apiVersion: v2
+name: falcosight
+description: A Helm chart for FalcoSight Security Observability & SOAR Dashboard (Vue3, Go, PostgreSQL)
+type: application
+version: 0.1.0
+appVersion: "1.0.0"

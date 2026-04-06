@@ -1,0 +1,43 @@
+# Documentation (ignorat conform cerinței)
+doc/
+
+# Director general GitHub/Reviwe-uri (dacă e nevoie, lăsăm .github)
+# ignărăm fișiere temporare
+*.swp
+*.swo
+*~
+.DS_Store
+
+# ----------------
+# Backend (Go)
+# ----------------
+backend/falcosight-backend
+backend/bin/
+backend/tmp/
+backend/vendor/
+backend/.env
+backend/.env.*
+
+# ----------------
+# Frontend (Vue/Node)
+# ----------------
+frontend/node_modules/
+frontend/dist/
+frontend/.env
+frontend/.env.local
+frontend/.env.*.local
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+frontend/pnpm-debug.log*
+
+# ----------------
+# IDEs and Editors
+# ----------------
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?

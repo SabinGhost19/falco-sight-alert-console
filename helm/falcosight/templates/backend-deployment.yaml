@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-backend
+  labels:
+    app: falcosight-backend
+spec:
+  replicas: {{ .Values.backend.replicaCount }}
+  selector:
+    matchLabels:
+      app: falcosight-backend
+  template:
+    metadata:
+      labels:
+        app: falcosight-backend
+    spec:
+      # We need cluster role access to read deployments / pods metadata for correlation
+      serviceAccountName: {{ .Release.Name }}-backend-sa
+      containers:
+        - name: backend
+          image: "{{ .Values.backend.image.repository }}:{{ .Values.backend.image.tag }}"
+          imagePullPolicy: {{ .Values.backend.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.backend.service.targetPort }}
+          env:
+            - name: ADMIN_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-credentials
+                  key: ADMIN_USER
+            - name: ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-credentials
+                  key: ADMIN_PASSWORD
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-credentials
+                  key: JWT_SECRET
+            {{- if .Values.postgresql.enabled }}
+            - name: DB_HOST
+              value: "{{ .Release.Name }}-postgresql"
+            - name: DB_USER
+              value: "{{ .Values.postgresql.username }}"
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-credentials
+                  key: DB_PASSWORD
+            - name: DB_NAME
+              value: "{{ .Values.postgresql.database }}"
+            - name: DB_PORT
+              value: "{{ .Values.postgresql.service.port }}"
+            {{- end }}
+            - name: TALON_WEBHOOK_URL
+              value: "{{ .Values.backend.talonWebhookUrl }}"

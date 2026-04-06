@@ -1,0 +1,58 @@
+# Default values for FalcoSight.
+# This is a YAML-formatted file.
+
+global:
+  nameOverride: "falcosight"
+  # Set the administrator credentials directly here (will be mapped via secret)
+  adminUsername: "admin"
+  adminPassword: "superuser_password"
+  jwtSecret: "super-secret-falcosight-key-change-in-production"
+
+backend:
+  replicaCount: 1
+  image:
+    repository: falcosight-backend
+    pullPolicy: IfNotPresent
+    tag: "latest"
+  service:
+    type: ClusterIP
+    port: 3000
+    targetPort: 3000
+  # Unde sa trimit backend-ul comenzile de actiune manuale? (eg. Falco Talon service)
+  talonWebhookUrl: "http://falco-talon.falco-talon.svc.cluster.local:2803"
+
+frontend:
+  replicaCount: 1
+  image:
+    repository: falcosight-frontend
+    pullPolicy: IfNotPresent
+    tag: "latest"
+  service:
+    type: ClusterIP # Schimbat din NodePort în ClusterIP pentru a folosi Ingress
+    port: 80
+    targetPort: 80
+  ingress:
+    enabled: true
+    className: "nginx"
+    annotations:
+      nginx.ingress.kubernetes.io/proxy-body-size: "8m"
+    hosts:
+      - host: falcosight.ghosty-dashboard.com
+        paths:
+          - path: /
+            pathType: Prefix
+
+postgresql:
+  # O sa ridicam local si o bd postgres StatefulSet daca e pe true
+  enabled: true
+  image:
+    repository: timescale/timescaledb
+    tag: "latest-pg15"
+  database: "falcosight"
+  username: "postgres"
+  password: "postgrespassword"
+  service:
+    port: 5432
+  persistence:
+    enabled: false # Pentru demo setat e false. La productie se cere volume claim
+    size: 8Gi
