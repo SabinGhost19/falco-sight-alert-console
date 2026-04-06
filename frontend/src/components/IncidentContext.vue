@@ -302,6 +302,7 @@ const highlightVulnerableLines = (monaco: any) => {
   const lines = alert.value.vulnerable_lines.split(',')
   const decorations = lines.map(lineStr => {
     const lineNum = parseInt(lineStr)
+    if (isNaN(lineNum)) return null;
     return {
       range: new monaco.Range(lineNum, 1, lineNum, 100),
       options: {
@@ -310,7 +311,7 @@ const highlightVulnerableLines = (monaco: any) => {
         glyphMarginClassName: 'vulnerable-line-glyph'
       }
     }
-  })
+  }).filter(Boolean)
 
   monacoEditorInstance.value?.createDecorationsCollection(decorations)
 }

@@ -52,11 +52,20 @@ func HandleFalcoWebhook(c *fiber.Ctx) error {
 		if bytes, err := json.Marshal(val); err == nil {
 			processTree = string(bytes)
 		}
-	}
+        } else {
+                // Fallback for rules that don't output %proc.aname specifically
+                // Falco's proc.aname returns [parent, grandparent, root].
+                var ancestors []string
+                if pName, ok1 := payload.OutputFields["proc.pname"].(string); ok1 && pName != "" {
+                        ancestors = append(ancestors, string(pName))
+                } else if cName, ok2 := payload.OutputFields["k8s.container.name"].(string); ok2 {
+                        ancestors = append(ancestors, "Container: " + string(cName))
+                }
+                ancestors = append(ancestors, "[Container Runtime]")
 
-	// Mitre Tags
-	if len(payload.Tags) > 0 {
-		if bytes, err := json.Marshal(payload.Tags); err == nil {
+                if bytes, err := json.Marshal(ancestors); err == nil {
+                        processTree = string(bytes)
+                }
 			mitreTags = string(bytes)
 		}
 	}
