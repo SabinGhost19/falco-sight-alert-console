@@ -2,7 +2,7 @@
   <v-container class="fill-height bg-background d-flex align-center justify-center">
     <v-card class="elevation-4 pb-4 bg-surface gc-border" max-width="400" width="100%" rounded="lg">
       <v-card-title class="d-flex justify-center align-center pt-6 pb-2">
-        <img src="@/assets/logo.png" alt="Falco Logo" style="height: 36px" class="mr-3" />
+        <img src="../assets/logo.png" alt="Falco Logo" style="height: 36px" class="mr-3" />
         <span class="text-h5 font-weight-medium text-high-emphasis">FalcoSight</span>
       </v-card-title>
       

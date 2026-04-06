@@ -6,7 +6,7 @@
         <v-btn icon="mdi-menu" variant="text" size="small" color="info" @click="drawer = !drawer"></v-btn>
 
         <-> Brand -->
-        <img src="@/assets/logo.png" alt="Falco Logo" class="ml-2 mr-2" style="height: 26px; cursor: pointer" @click="router.push('/')" />
+        <img src="./assets/logo.png" alt="Falco Logo" class="ml-2 mr-2" style="height: 26px; cursor: pointer" @click="router.push('/')" />
         <span class="font-weight-medium text-high-emphasis text-subtitle-1" style="cursor: pointer" @click="router.push('/')">
           FalcoSight
         </span>
