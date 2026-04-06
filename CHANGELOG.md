@@ -1,3 +1,10 @@
+## [1.3.1](https://github.com/SabinGhost19/falco-sight-alert-console/compare/v1.3.0...v1.3.1) (2026-04-06)
+
+
+### Bug Fixes
+
+* bakg color ([4af654a](https://github.com/SabinGhost19/falco-sight-alert-console/commit/4af654a11ac57cb8337a542c65fe8750373c1b69))
+
 # [1.3.0](https://github.com/SabinGhost19/falco-sight-alert-console/compare/v1.2.0...v1.3.0) (2026-04-06)
 
 
