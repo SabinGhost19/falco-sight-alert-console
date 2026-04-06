@@ -27,8 +27,8 @@ func HandleFalcoWebhook(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(customErrors.NewErrorResponse("ERR_INVALID_JSON", "Payload invalid de la Falco.", err.Error()))
 	}
 
-	// Extragem namespace și pod_name
-	var namespace, podName, containerName string
+	// Extragem namespace, pod_name, container_name și alte informații avansate
+	var namespace, podName, containerName, containerImage, processTree, mitreTags string
 	if val, ok := payload.OutputFields["k8s.ns.name"].(string); ok {
 		namespace = val
 	}
@@ -40,13 +40,35 @@ func HandleFalcoWebhook(c *fiber.Ctx) error {
 	} else if val, ok := payload.OutputFields["container.name"].(string); ok {
 		containerName = val
 	}
+
+	if val, ok := payload.OutputFields["container.image.repository"].(string); ok {
+		containerImage = val
+	}
+
+	// Process Ancestry
+	if val, ok := payload.OutputFields["proc.aname"]; ok {
+		if bytes, err := json.Marshal(val); err == nil {
+			processTree = string(bytes)
+		}
+	}
+
+	// Mitre Tags
+	if len(payload.Tags) > 0 {
+		if bytes, err := json.Marshal(payload.Tags); err == nil {
+			mitreTags = string(bytes)
+		}
+	}
+
 	alertRecord := models.AlertModel{
-		Priority:      payload.Priority,
-		Rule:          payload.Rule,
-		Message:       payload.Output,
-		Namespace:     namespace,
-		PodName:       podName,
-		ContainerName: containerName,
+		Priority:       payload.Priority,
+		Rule:           payload.Rule,
+		Message:        payload.Output,
+		Namespace:      namespace,
+		PodName:        podName,
+		ContainerName:  containerName,
+		ContainerImage: containerImage,
+		ProcessTree:    processTree,
+		MitreTags:      mitreTags,
 	}
 
 	// ⏳ Forward Payload -> Falco Talon async
@@ -74,6 +96,8 @@ func HandleFalcoWebhook(c *fiber.Ctx) error {
 					alertRec.ManifestYAML = manifestYAML
 					alertRec.VulnerableLines = k8s.AnalyzeManifest(manifestYAML)
 				}
+				// Call Blast Radius
+				alertRec.RbacRisk, alertRec.NetworkRisk = k8s.AnalyzeBlastRadius(ns, pod)
 			} else {
 				log.Println("K8s Clientset is nil, skipping static analysis.")
 			}

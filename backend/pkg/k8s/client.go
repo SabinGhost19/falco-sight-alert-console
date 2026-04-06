@@ -73,3 +73,30 @@ func AnalyzeManifest(manifestYAML string) string {
 	}
 	return strings.Join(vulnerableLines, ",")
 }
+
+// AnalyzeBlastRadius simulează/extrage permisiunile de rețea și RBAC
+func AnalyzeBlastRadius(namespace string, podName string) (rbacRisk string, networkRisk string) {
+	if Clientset == nil {
+		return "Unknown", "Unknown"
+	}
+
+	pod, err := Clientset.CoreV1().Pods(namespace).Get(context.TODO(), podName, metav1.GetOptions{})
+	if err != nil {
+		return "Unknown", "Unknown"
+	}
+
+	// RBAC Logic
+	sa := pod.Spec.ServiceAccountName
+	if sa == "default" || sa == "" {
+		rbacRisk = "Safe: Default SA"
+	} else {
+		rbacRisk = "Critical RBAC Privileges: Potential Secret/Admin access"
+	}
+
+	// Network Logic (Simplificat: presupunem că vrem să dăm avertisment dacă găsim o imagine web)
+	networkRisk = "Egress: Unrestricted. Pod can communicate with the external internet."
+	
+	// Analizeaza pe viitor networking.k8s.io/v1 NetworkPolicies aici.
+
+	return rbacRisk, networkRisk
+}
