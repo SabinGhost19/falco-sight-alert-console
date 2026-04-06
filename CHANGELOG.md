@@ -1,3 +1,10 @@
+## [1.1.6](https://github.com/SabinGhost19/falco-sight-alert-console/compare/v1.1.5...v1.1.6) (2026-04-06)
+
+
+### Bug Fixes
+
+* falco response ([81a90f6](https://github.com/SabinGhost19/falco-sight-alert-console/commit/81a90f62a9bc3057e21064f49d4370593a3d9f9c))
+
 ## [1.1.5](https://github.com/SabinGhost19/falco-sight-alert-console/compare/v1.1.4...v1.1.5) (2026-04-06)
 
 
