@@ -1,3 +1,10 @@
+## [1.3.2](https://github.com/SabinGhost19/falco-sight-alert-console/compare/v1.3.1...v1.3.2) (2026-04-06)
+
+
+### Bug Fixes
+
+* update opnapi version for jit access request ([9d5ab1e](https://github.com/SabinGhost19/falco-sight-alert-console/commit/9d5ab1e9892c5937a8f483adaa80281e1e2afc83))
+
 ## [1.3.1](https://github.com/SabinGhost19/falco-sight-alert-console/compare/v1.3.0...v1.3.1) (2026-04-06)
 
 
