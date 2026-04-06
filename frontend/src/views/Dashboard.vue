@@ -3,6 +3,38 @@
     <div class="text-h5 font-weight-medium mb-1 text-high-emphasis">Command Center</div>
     <div class="text-body-2 text-medium-emphasis mb-6">Overview of K8s workload security posture across your environments over the last 24h.</div>
     
+    <!-- Control Panel -->
+    <v-row class="mb-4 d-flex align-center">
+      <v-col cols="12" md="6" class="d-flex gap-4">
+        <v-select
+          v-model="timeRange"
+          :items="[
+            { title: 'Last 1 Hour', value: 1 },
+            { title: 'Last 6 Hours', value: 6 },
+            { title: 'Last 12 Hours', value: 12 },
+            { title: 'Last 24 Hours', value: 24 },
+            { title: 'Last 7 Days', value: 168 }
+          ]"
+          label="Time Range"
+          variant="outlined"
+          density="compact"
+          hide-details
+          class="mr-4"
+          style="max-width: 200px;"
+        ></v-select>
+
+        <v-select
+          v-model="severityFilter"
+          :items="['All', 'Emergency', 'Critical', 'Error', 'Warning', 'Notice', 'Info', 'Debug']"
+          label="Severity"
+          variant="outlined"
+          density="compact"
+          hide-details
+          style="max-width: 200px;"
+        ></v-select>
+      </v-col>
+    </v-row>
+
     <!-- Summary Cards -->
     <v-row>
       <!-- Total Alerts -->
@@ -97,20 +129,46 @@ const apexchart = VueApexCharts
 const store = useAlertsStore()
 const router = useRouter()
 
-const highPriority = computed(() => store.alerts.filter(a => ['Critical', 'Emergency', 'error'].includes(a.priority) || a.priority === 'High'))
-const talonRemediated = computed(() => store.alerts.filter(a => a.talon_status === 'Success' || a.talon_status === 'Requested').length)
+// Stare locală pentru filtre (Timp și Severitate)
+const timeRange = ref(24) // Default ultimele 24 de ore (nr de ore)
+const severityFilter = ref('All')
+
+// Funcție ajutătoare pentru filtrarea tuturor alertele în funcție de state-ul din select-uri
+const filteredAlerts = computed(() => {
+  const now = new Date().getTime()
+  const cutoffTime = now - timeRange.value * 60 * 60 * 1000
+
+  return store.alerts.filter(a => {
+    // Verificăm if are creat_at (ar trebui mereu, dar e mai safe)
+    if (!a.created_at) return false
+    const alertTime = new Date(a.created_at).getTime()
+    
+    // 1. Filtrul de timp
+    if (alertTime < cutoffTime) return false
+
+    // 2. Filtrul de severitate
+    if (severityFilter.value !== 'All') {
+      if (a.priority.toLowerCase() !== severityFilter.value.toLowerCase()) return false
+    }
+
+    return true
+  })
+})
+
+const highPriority = computed(() => filteredAlerts.value.filter(a => ['Critical', 'Emergency', 'error'].includes(a.priority) || a.priority === 'High'))
+const talonRemediated = computed(() => filteredAlerts.value.filter(a => a.talon_status === 'Success' || a.talon_status === 'Requested').length)
 
 // Numarul unic de Workload-uri atacate
 const uniqueWorkloads = computed(() => {
   const workloads = new Set<string>()
-  store.alerts.forEach(a => { if (a.pod_name) workloads.add(`${a.namespace}/${a.pod_name}`) })
+  filteredAlerts.value.forEach(a => { if (a.pod_name) workloads.add(`${a.namespace}/${a.pod_name}`) })
   return workloads.size
 })
 
 // Topul vulnerabilitatilor
 const topOffenders = computed(() => {
   const map: Record<string, {pod_name: string, namespace: string, count: number}> = {}
-  store.alerts.forEach(a => {
+  filteredAlerts.value.forEach(a => {
       if(!a.pod_name) return
       const k = `${a.namespace}/${a.pod_name}`
       if(!map[k]) {
@@ -129,38 +187,49 @@ const goToLogs = (podQuery: string) => {
    router.push({ path: '/logs', query: { q: podQuery } })
 }
 
-// Date complet dinamice pentru grafic bazat pe creat_at
+// Date complet dinamice pentru grafic bazat pe creat_at și filtre
 const chartData = computed(() => {
-  // Vom construi un grafic pe ultimele 12 ore
-  const hours = 12;
+  const hours = timeRange.value; // ex: 1, 6, 12, 24, 7d=168
   const now = new Date();
   
-  // Inițializăm bucket-uri pentru ultimele 12 ore
-  const buckets = Array.from({length: hours}, (_, i) => {
-    const d = new Date(now.getTime() - (hours - 1 - i) * 60 * 60 * 1000);
-    return {
-      hourLabel: `${d.getHours().toString().padStart(2, '0')}:00`,
-      count: 0,
-      timestamp: d.getTime()
-    };
-  });
-
-  // Distribuim altele din store
-  const twelveHoursAgo = now.getTime() - hours * 60 * 60 * 1000;
+  // Inițializăm bucket-urile corect, the first bucket is (now - hours)
+  const buckets: { hourLabel: string, count: number, timestamp: number }[] = [];
   
-  store.alerts.forEach(alert => {
+  if (hours <= 24) {
+     // Dacă e <= 24, afișăm pe ore curat
+     for (let i = hours - 1; i >= 0; i--) {
+        const d = new Date(now.getTime() - i * 60 * 60 * 1000);
+        buckets.push({
+           hourLabel: `${d.getHours().toString().padStart(2, '0')}:00`,
+           count: 0,
+           timestamp: d.getTime()
+        });
+     }
+  } else {
+     // Dacă e 7 days (168), afișăm pe zile (în loc de 168 ore de puncte, punem 7 buline per zi)
+     for (let i = 6; i >= 0; i--) {
+        const d = new Date(now.getTime() - i * 24 * 60 * 60 * 1000);
+        buckets.push({
+           hourLabel: `${d.getDate()}/${d.getMonth()+1}`,
+           count: 0,
+           timestamp: d.getTime()
+        });
+     }
+  }
+
+  // Interval de cutoff pentru a încadra pe bucket-uri
+  let intervalMs = (hours <= 24) ? (60 * 60 * 1000) : (24 * 60 * 60 * 1000);
+
+  // Folosim `filteredAlerts` care ține cont de Severitate, nu mai căutăm din nou în Store global
+  filteredAlerts.value.forEach(alert => {
     if (!alert.created_at) return;
     const alertTime = new Date(alert.created_at).getTime();
-    if (alertTime >= twelveHoursAgo) {
-      // Găsim bucket-ul corect
-      for (let i = 0; i < hours; i++) {
-        const bucketStart = buckets[i].timestamp - (30 * 60 * 1000); // approx centering
-        const bucketEnd = buckets[i].timestamp + (30 * 60 * 1000);
-        if (alertTime >= bucketStart && alertTime < bucketEnd) {
-          buckets[i].count++;
-          break;
-        }
-      }
+    
+    // Găsim cel mai apropiat bucket (sau iterăm pur și simplu)
+    let indexBucket = buckets.length - 1 - Math.floor((now.getTime() - alertTime) / intervalMs);
+    
+    if (indexBucket >= 0 && indexBucket < buckets.length) {
+        buckets[indexBucket].count++;
     }
   });
 

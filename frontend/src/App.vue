@@ -72,10 +72,6 @@
         <v-list-item to="/rules" prepend-icon="mdi-robot-outline" color="primary" rounded="sm">
           <v-list-item-title class="font-weight-medium text-body-2">Talon Actions (SOAR)</v-list-item-title>
         </v-list-item>
-        
-        <v-list-item href="http://dashboard.devsecops.licenta.ro" target="_blank" prepend-icon="mdi-shield-check-outline" color="primary" rounded="sm">
-          <v-list-item-title class="font-weight-medium text-body-2">Policies</v-list-item-title>
-        </v-list-item>
 
       </v-list>
     </v-navigation-drawer>

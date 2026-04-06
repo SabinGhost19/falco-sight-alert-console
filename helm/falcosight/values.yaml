@@ -4,11 +4,12 @@ global:
   adminPassword: "superuser_password"
   jwtSecret: "UEoFJp2LvR82WzMhIxZ3ViiTqWs8CuPmmP0CM5qhwzXhHwr8azL38Vyi9UNp2B5uEvHibyeoKHddFwiAQQZHoP"
 backend:
-  replicaCount: 1
+  replicaCount: 2
   image:
     repository: ghcr.io/sabinghost19/falco-sight-alert-console-backend
     pullPolicy: IfNotPresent
-    tag: "edf48a0"
+    
+    tag: "d63f517"
   service:
     type: ClusterIP
     port: 3000
@@ -19,7 +20,8 @@ frontend:
   image:
     repository: ghcr.io/sabinghost19/falco-sight-alert-console-frontend
     pullPolicy: IfNotPresent
-    tag: "edf48a0"
+    
+    tag: "d63f517"
   service:
     type: ClusterIP
     port: 80
