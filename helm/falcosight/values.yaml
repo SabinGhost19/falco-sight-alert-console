@@ -3,25 +3,23 @@ global:
   adminUsername: "admin"
   adminPassword: "superuser_password"
   jwtSecret: "UEoFJp2LvR82WzMhIxZ3ViiTqWs8CuPmmP0CM5qhwzXhHwr8azL38Vyi9UNp2B5uEvHibyeoKHddFwiAQQZHoP"
-
 backend:
   replicaCount: 1
   image:
     repository: ghcr.io/sabinghost19/falco-sight-alert-console-backend
     pullPolicy: IfNotPresent
-    tag: "595524c"
+    tag: "d63f517"
   service:
     type: ClusterIP
     port: 3000
     targetPort: 3000
   talonWebhookUrl: "http://falco-talon.falco-talon.svc.cluster.local:2803"
-
 frontend:
   replicaCount: 1
   image:
     repository: ghcr.io/sabinghost19/falco-sight-alert-console-frontend
     pullPolicy: IfNotPresent
-    tag: "595524c"
+    tag: "d63f517"
   service:
     type: ClusterIP
     port: 80
@@ -36,7 +34,6 @@ frontend:
         paths:
           - path: /
             pathType: Prefix
-
 postgresql:
   enabled: true
   image:
