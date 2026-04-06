@@ -41,7 +41,9 @@ func HandleFalcoWebhook(c *fiber.Ctx) error {
 		containerName = val
 	}
 
-	if val, ok := payload.OutputFields["container.image.repository"].(string); ok {
+	if val, ok := payload.OutputFields["container.image.repository"].(string); ok && val != "" {
+		containerImage = val
+	} else if val, ok := payload.OutputFields["container.image"].(string); ok {
 		containerImage = val
 	}
 

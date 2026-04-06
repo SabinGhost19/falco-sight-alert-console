@@ -1,17 +1,18 @@
 package k8s
 
 import (
-	"context"
-	"log"
-	"strconv"
-	"strings"
+"context"
+"log"
+"strconv"
+"strings"
 
-	"gopkg.in/yaml.v3"
-	corev1 "k8s.io/api/core/v1"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/client-go/kubernetes"
-	"k8s.io/client-go/rest"
-	"k8s.io/client-go/tools/clientcmd"
+"gopkg.in/yaml.v3"
+corev1 "k8s.io/api/core/v1"
+netv1 "k8s.io/api/networking/v1"
+metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+"k8s.io/client-go/kubernetes"
+"k8s.io/client-go/rest"
+"k8s.io/client-go/tools/clientcmd"
 )
 
 var Clientset *kubernetes.Clientset
@@ -74,29 +75,61 @@ func AnalyzeManifest(manifestYAML string) string {
 	return strings.Join(vulnerableLines, ",")
 }
 
-// AnalyzeBlastRadius simulează/extrage permisiunile de rețea și RBAC
+// AnalyzeBlastRadius simulează/extrage permisiunile de rețea și RBAC real din Kubernetes
 func AnalyzeBlastRadius(namespace string, podName string) (rbacRisk string, networkRisk string) {
 	if Clientset == nil {
-		return "Unknown", "Unknown"
+		return "Unknown: k8s client disabled", "Unknown"
 	}
 
 	pod, err := Clientset.CoreV1().Pods(namespace).Get(context.TODO(), podName, metav1.GetOptions{})
 	if err != nil {
-		return "Unknown", "Unknown"
+		return "Unknown: pod missing", "Unknown"
 	}
 
-	// RBAC Logic
+	// 1. RBAC Extraction
 	sa := pod.Spec.ServiceAccountName
-	if sa == "default" || sa == "" {
-		rbacRisk = "Safe: Default SA"
-	} else {
-		rbacRisk = "Critical RBAC Privileges: Potential Secret/Admin access"
+	if sa == "" {
+		sa = "default"
 	}
 
-	// Network Logic (Simplificat: presupunem că vrem să dăm avertisment dacă găsim o imagine web)
-	networkRisk = "Egress: Unrestricted. Pod can communicate with the external internet."
-	
-	// Analizeaza pe viitor networking.k8s.io/v1 NetworkPolicies aici.
+	rbacRisk = "Safe: Default SA"
+	if sa != "default" {
+		rbacRisk = "Elevated: " + sa + " Service Account."
+
+		// Attempt to parse deep bindings 
+		// (Simplificat aici in mod real se pot itera ClusterRoleBindings / RoleBindings, dar pentru scop demo adaugam info detaliat)
+		crbs, err := Clientset.RbacV1().ClusterRoleBindings().List(context.TODO(), metav1.ListOptions{})
+		if err == nil {
+			for _, crb := range crbs.Items {
+				for _, subject := range crb.Subjects {
+					if subject.Kind == "ServiceAccount" && subject.Name == sa && subject.Namespace == namespace {
+						rbacRisk = "Critical RBAC Privileges: Pod mapped to ClusterRole '" + crb.RoleRef.Name + "'"
+						break
+					}
+				}
+			}
+		}
+	}
+
+	// 2. Network Policies Extraction
+	netPol, err := Clientset.NetworkingV1().NetworkPolicies(namespace).List(context.TODO(), metav1.ListOptions{})
+	if err != nil || len(netPol.Items) == 0 {
+		networkRisk = "Egress: Unrestricted. No NetworkPolicy found. Pod can connect anywhere."
+	} else {
+		// Daca avem elemente - cautam daca vreuna influenteaza ingress/egress ul podului...
+		networkRisk = "Protected: Network Policies are defined in this namespace."
+		hasEgressLimit := false
+		for _, np := range netPol.Items {
+			for _, p := range np.Spec.PolicyTypes {
+				if p == netv1.PolicyTypeEgress {
+					hasEgressLimit = true
+				}
+			}
+		}
+		if !hasEgressLimit {
+			networkRisk = "Partial Risk: Policies exist but Egress is unrestricted. Exfiltration possible."
+		}
+	}
 
 	return rbacRisk, networkRisk
 }
