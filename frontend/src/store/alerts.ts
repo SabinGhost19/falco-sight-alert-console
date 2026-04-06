@@ -26,7 +26,7 @@ export const useAlertsStore = defineStore('alerts', {
     async fetchAlerts() {
       this.loading = true
       try {
-        const response = await axios.get('http://localhost:3000/api/v1/alerts')
+        const response = await axios.get('/api/v1/alerts')
         this.alerts = response.data
       } catch (error) {
         console.error('Error fetching alerts:', error)
@@ -37,7 +37,7 @@ export const useAlertsStore = defineStore('alerts', {
     
     async triggerTalon(alertId: number, actionName: string) {
       try {
-        await axios.post('http://localhost:3000/api/v1/talon/trigger', {
+        await axios.post('/api/v1/talon/trigger', {
           alert_id: alertId,
           action: actionName
         })

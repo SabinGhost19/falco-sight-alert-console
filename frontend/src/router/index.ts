@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
+import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 import Dashboard from '../views/Dashboard.vue'
 import IncidentContext from '../components/IncidentContext.vue'
 import Login from '../views/Login.vue'
@@ -46,7 +46,7 @@ const router = createRouter({
 })
 
 // Navigation Guard pentru protejarea rutelor
-router.beforeEach((to, from, next) => {
+router.beforeEach((to, _from, next) => {
   const authStore = useAuthStore()
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth)
 

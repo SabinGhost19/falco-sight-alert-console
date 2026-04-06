@@ -1,8 +1,8 @@
 <template>
   <v-container class="fill-height bg-background d-flex align-center justify-center">
     <v-card class="elevation-4 pb-4" max-width="400" width="100%" rounded="lg">
-      <v-card-title class="d-flex justify-center pt-6 pb-2">
-        <v-icon color="primary" size="large" class="mr-2">mdi-shield-check</v-icon>
+      <v-card-title class="d-flex justify-center align-center pt-6 pb-2">
+        <img src="@/assets/logo.png" alt="Falco Logo" style="height: 36px" class="mr-3" />
         <span class="text-h5 font-weight-medium text-grey-darken-3">FalcoSight</span>
       </v-card-title>
       

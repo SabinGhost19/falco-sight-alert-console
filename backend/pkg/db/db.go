@@ -1,12 +1,12 @@
 package db
 
 import (
-"log"
+	"log"
 
-"falcosight/pkg/models"
+	"falcosight/pkg/models"
 
-"gorm.io/driver/postgres"
-"gorm.io/gorm"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 )
 
 var DB *gorm.DB
@@ -23,7 +23,7 @@ func ConnectDB(dsn string) {
 	DB.Exec(`CREATE EXTENSION IF NOT EXISTS timescaledb;`)
 
 	// Auto-Migrate models
-	err = DB.AutoMigrate(&models.AlertModel{})
+	err = DB.AutoMigrate(&models.AlertModel{}, &models.TalonRuleModel{})
 	if err != nil {
 		log.Fatalf("Failed to migrate database: %v", err)
 	}

@@ -1,21 +1,23 @@
 package main
 
 import (
-"log"
-"os"
+	"log"
+	"os"
 
-"falcosight/pkg/api/routes"
-"falcosight/pkg/db"
-"falcosight/pkg/k8s"
+	"falcosight/pkg/api/errors"
+	"falcosight/pkg/api/routes"
+	"falcosight/pkg/db"
+	"falcosight/pkg/k8s"
 
-"github.com/gofiber/fiber/v2"
-"github.com/gofiber/fiber/v2/middleware/cors"
-"github.com/gofiber/fiber/v2/middleware/logger"
+	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/gofiber/fiber/v2/middleware/logger"
+	"github.com/gofiber/fiber/v2/middleware/recover"
 )
 
 func main() {
 	// 1. Inițializează K8s Client (Kubeconfig sau In-Cluster)
-	k8s.InitK8sClient("")
+	k8s.InitK8sClient(os.Getenv("KUBECONFIG"))
 
 	// 2. Conectarea la Baza de Date PostgreSQL. Citim dintr-un Env Var, alfel default value.
 	dbHost := getEnv("DB_HOST", "localhost")
@@ -27,17 +29,29 @@ func main() {
 	dsn := "host=" + dbHost + " user=" + dbUser + " password=" + dbPass + " dbname=" + dbName + " port=" + dbPort + " sslmode=disable TimeZone=UTC"
 	db.ConnectDB(dsn)
 
-	// 3. Inițializează aplicația Fiber
+	// 3. Inițializează aplicația Fiber + Global Error Handler
 	app := fiber.New(fiber.Config{
-AppName: "FalcoSight Ingestion API & Correlator",
-})
+		AppName:      "FalcoSight Ingestion API & Correlator",
+		ErrorHandler: errors.GlobalErrorHandler,
+	})
 
-	// Middleware-uri Globale
+	// Verificari de Securitate Production Ready
+	if os.Getenv("JWT_SECRET") == "" || os.Getenv("ADMIN_USER") == "" || os.Getenv("ADMIN_PASSWORD") == "" {
+		log.Fatal("CRITICAL: Missing JWT_SECRET, ADMIN_USER, or ADMIN_PASSWORD. Production environment must provide secure credentials.")
+	}
+
+	// Middleware-uri Globale (Recover is critical for enterprise)
+	app.Use(recover.New())
 	app.Use(logger.New())
+
+	allowedOrigins := os.Getenv("CORS_ALLOWED_ORIGINS")
+	if allowedOrigins == "" {
+		log.Println("WARN: CORS_ALLOWED_ORIGINS not set. Defaulting to strict same-origin only.")
+	}
 	app.Use(cors.New(cors.Config{
-AllowOrigins: "*", // Pentru dezvoltare permitem tot.
-AllowHeaders: "Origin, Content-Type, Accept",
-}))
+		AllowOrigins: allowedOrigins,
+		AllowHeaders: "Origin, Content-Type, Accept, Authorization",
+	}))
 
 	// 4. Setarea Rutelor (Webhook-uri Falco + API UI)
 	routes.Setup(app)

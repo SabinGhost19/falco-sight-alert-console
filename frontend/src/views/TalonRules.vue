@@ -5,8 +5,11 @@
         <v-icon color="primary" class="mr-2">mdi-shield-edit</v-icon>
         Automated Responses Maps (Talon Rules)
         <v-spacer></v-spacer>
-        <v-btn color="primary" variant="outlined" size="small" class="text-none">
-          Sync Rules from Cluster
+        <v-btn color="primary" variant="outlined" size="small" class="text-none" @click="store.fetchRules()">
+            <v-icon start icon="mdi-refresh" /> Sync Rules
+        </v-btn>
+        <v-btn color="primary" variant="flat" size="small" class="text-none ml-2" @click="openDialog">
+            <v-icon start icon="mdi-plus" /> New Rule
         </v-btn>
       </v-card-title>
       <v-card-text class="pt-4 text-body-1 text-grey-darken-2">
@@ -16,53 +19,97 @@
 
     <v-data-table
       :headers="headers"
-      :items="mockRules"
+      :items="store.rules"
+      :loading="store.loading"
       hide-default-footer
       class="elevation-1"
     >
-      <template v-slot:item.falco_rule="{ item }">
-        <span class="font-weight-medium">{{ item.falco_rule }}</span>
+      <template #item.falcoRule="{ item }">
+        <span class="font-weight-medium">{{ item.falcoRule }}</span>
       </template>
 
-      <template v-slot:item.action="{ item }">
+      <template #item.action="{ item }">
         <v-chip color="primary" variant="outlined" size="small">
-          <v-icon start size="x-small">mdi-flash</v-icon> {{ item.action }}
+          <v-icon start size="x-small">mdi-flash</v-icon> {{ item.action }} {{ item.actionDetails ? `(${item.actionDetails})` : '' }}
         </v-chip>
       </template>
 
-      <template v-slot:item.status="{ item }">
+      <template #item.status="{ item }">
         <v-switch
-          v-model="item.active"
+          :model-value="item.enabled"
+          @update:model-value="store.toggleRule(item.ID)"
           color="success"
           hide-details
           inset
           class="d-inline-flex ml-n2"
-          :label="item.active ? 'Enforce' : 'Audit Mode'"
+          :label="item.enabled ? 'Enforce' : 'Audit Mode'"
         ></v-switch>
       </template>
 
-      <template v-slot:item.edit>
-        <v-btn icon="mdi-pencil-outline" size="small" variant="text"></v-btn>
+      <template #item.actions="{ item }">
+        <v-btn icon="mdi-delete-outline" color="error" size="small" variant="text" @click="deleteRule(item.ID)"></v-btn>
       </template>
     </v-data-table>
+
+    <-> Dialog for new rule -->
+    <v-dialog v-model="dialog" max-width="500">
+      <v-card>
+        <v-card-title>Create Talon Rule</v-card-title>
+        <v-card-text>
+          <v-text-field v-model="newRule.name" label="Rule Name" required></v-text-field>
+          <v-text-field v-model="newRule.falcoRule" label="Falco Rule Trigger" required></v-text-field>
+          <v-select v-model="newRule.action" :items="['terminate_pod', 'network_isolate', 'label_pod']" label="Action"></v-select>
+          <v-text-field v-if="newRule.action === 'label_pod'" v-model="newRule.actionDetails" label="Action Details (e.g. key=val)"></v-text-field>
+          <v-switch v-model="newRule.enabled" label="Enabled"></v-switch>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn text="Close" @click="dialog = false"></v-btn>
+          <v-btn color="primary" @click="saveRule" variant="flat">Save</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import { useRulesStore } from '../store/rules'
+
+const store = useRulesStore()
+const dialog = ref(false)
+
+const newRule = ref({
+    name: '',
+    falcoRule: '',
+    action: 'terminate_pod',
+    actionDetails: '',
+    enabled: true
+})
 
 const headers = [
-  { title: 'Falco Rule (Trigger)', key: 'falco_rule' },
-  { title: 'Target Workload', key: 'match' },
+  { title: 'Rule Name', key: 'name' },
+  { title: 'Falco Rule (Trigger)', key: 'falcoRule' },
   { title: 'Talon Parameter (Action)', key: 'action' },
   { title: 'Status / Mode', key: 'status' },
-  { title: 'Configure', key: 'edit', sortable: false, align: 'end' }
+  { title: 'Actions', key: 'actions', sortable: false, align: 'end' as const }
 ]
 
-const mockRules = ref([
-  { id: 1, falco_rule: 'Terminal shell in container', match: 'k8s.ns.name=*', action: 'Terminate Pod', active: true },
-  { id: 2, falco_rule: 'Write below etc', match: 'k8s.pod.labels.app=api', action: 'Label: quarantine=true', active: false },
-  { id: 3, falco_rule: 'Drop and execute new binary', match: 'k8s.ns.name=production', action: 'Network Isolate', active: true },
-  { id: 4, falco_rule: 'Run as Root User', match: 'k8s.ns.name!=kube-system', action: 'Network Isolate', active: false },
-])
+onMounted(() => {
+    store.fetchRules()
+})
+
+const openDialog = () => {
+    newRule.value = { name: '', falcoRule: '', action: 'terminate_pod', actionDetails: '', enabled: true }
+    dialog.value = true
+}
+
+const saveRule = async () => {
+    await store.createRule(newRule.value)
+    dialog.value = false
+}
+
+const deleteRule = async (id: number) => {
+    await store.deleteRule(id)
+}
 </script>

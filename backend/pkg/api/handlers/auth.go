@@ -20,15 +20,9 @@ func Login(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request payload"})
 	}
 
-	// Citim datele corecte din environment variables (fallback: admin/admin)
+	// Citim datele corecte din environment variables (strict)
 	expectedUser := os.Getenv("ADMIN_USER")
-	if expectedUser == "" {
-		expectedUser = "admin"
-	}
 	expectedPass := os.Getenv("ADMIN_PASSWORD")
-	if expectedPass == "" {
-		expectedPass = "admin"
-	}
 
 	// Verificăm credentialele
 	if req.Username != expectedUser || req.Password != expectedPass {
@@ -37,9 +31,6 @@ func Login(c *fiber.Ctx) error {
 
 	// Secretul JWT
 	secret := os.Getenv("JWT_SECRET")
-	if secret == "" {
-		secret = "super-secret-falcosight-key-change-in-production"
-	}
 
 	// Creăm claims-urile pentru token (valabil 24h)
 	claims := jwt.MapClaims{
