@@ -1,16 +1,16 @@
 <template>
   <v-container fluid class="pa-0 h-100 fill-height bg-background">
-    <!-- Split Screen Layout -->
+    
     <v-row no-gutters class="fill-height pb-0 mb-0">
       
-      <!-- Left Panel: Context & Falco Alert Info -->
+      
       <v-col cols="12" md="4" class="border-e gc-border bg-white pa-6 overflow-auto fill-height">
         <v-btn variant="text" prepend-icon="mdi-arrow-left" color="primary" class="mb-6 text-none pl-0 ml-n2" @click="router.push('/logs')">
           Back to Alerts
         </v-btn>
 
         <template v-if="alert">
-          <!-- Alert Header -->
+          
           <div class="d-flex align-center mb-3">
             <v-chip :color="priorityColor" size="small" variant="flat" class="mr-3 font-weight-bold text-white px-3">{{ alert.priority }}</v-chip>
             <span class="text-caption text-medium-emphasis font-weight-medium">{{ new Date(alert.created_at).toLocaleString() }}</span>
@@ -23,7 +23,7 @@
              <p class="text-body-2 font-monospace text-high-emphasis mb-0" style="word-break: break-word;">{{ alert.message }}</p>
           </v-card>
 
-          <!-- Corelate K8s Workload Details (GCP style key-value) -->
+          
           <div class="mb-6">
             <h3 class="text-subtitle-2 font-weight-bold text-medium-emphasis mb-3 text-uppercase border-b gc-border pb-2">Target Workload</h3>
             
@@ -45,11 +45,11 @@
             </v-row>
           </div>
 
-          <!-- Falco Talon Action Center (SOAR) -->
+          
           <div class="mt-8 mb-6">
             <h3 class="text-subtitle-2 font-weight-bold text-medium-emphasis mb-4 text-uppercase border-b gc-border pb-2">Response & Remediation</h3>
             
-            <!-- Timeline / Stepper visualization -->
+            
             <div class="d-flex align-start mb-4">
               <div class="d-flex flex-column align-center mr-4">
                  <v-icon color="error" size="small">mdi-shield-alert</v-icon>
@@ -75,7 +75,7 @@
                        No automatic policies matched or running in Audit Mode.
                     </div>
 
-                    <!-- Manual Overrides if unchecked -->
+                    
                     <div v-if="!alert.talon_status" class="mt-2 d-flex flex-column gap-2">
                        <v-btn color="primary" class="text-none font-weight-medium" variant="flat" size="small" @click="triggerAction('network_isolate')" :disabled="!alert" prepend-icon="mdi-lan-disconnect">
                           Manual Override: Isolate Pod
@@ -89,21 +89,21 @@
             </div>
           </div>
 
-          <!-- Componenta Repeat Offender (Mini Risk Profile) -->
+          
           <v-card variant="outlined" class="gc-border mt-4 mb-2 pa-4" color="surface">
              <div class="d-flex align-center">
                  <v-icon color="warning" class="mr-2">mdi-history</v-icon>
                  <div class="font-weight-medium text-subtitle-2 text-high-emphasis">Image Risk Profile</div>
              </div>
              <p class="text-caption text-medium-emphasis mt-2 mb-0">
-               Imaginea container detectată are <strong>un istoric suspicios</strong>. A generat Multiple incidente în ultimele 30 de zile.
+               The container image <strong>{{ alert?.container_image || 'unknown' }}</strong> has generated <strong class="text-error">{{ imageIncidentCount }}</strong> incidents cluster-wide in the past 30 days.
              </p>
              <v-btn size="x-small" color="primary" variant="text" class="text-none mt-2 px-0 font-weight-bold">View all incidents for this image</v-btn>
           </v-card>
         </template>
       </v-col>
 
-      <!-- Right Panel: Code Viewer (Monaco Editor) & Fixes -->
+      
       <v-col cols="12" md="8" class="bg-grey-darken-4 d-flex flex-column fill-height">
         <v-toolbar color="#202124" flat density="compact" class="border-b" style="border-bottom-color: #3C4043 !important;">
           <v-tabs v-model="tab" color="primary" bg-color="transparent" slider-color="primary" density="compact">
@@ -118,9 +118,9 @@
           </v-btn>
         </v-toolbar>
 
-        <!-- Container for Monaco Editor -->
+        
         <div class="flex-grow-1 position-relative" style="height: calc(100vh - 48px); overflow: hidden;">            
-            <!-- Empty State (Graceful Degradation) -->
+            
             <div v-if="!code || code.trim() === ''" class="d-flex flex-column justify-center align-center h-100 bg-grey-lighten-4" style="position: absolute; width: 100%; z-index: 10;">
               <v-icon color="warning" size="64" class="mb-4">mdi-alert-circle-outline</v-icon>
               <div class="text-h6 text-high-emphasis font-weight-medium">Manifest unavailable</div>
@@ -128,7 +128,7 @@
                 The YAML structure could not be retrieved from the Kubernetes API. The workload might have been deleted, or RBAC permissions are denying access.
               </div>
             </div>
-            <!-- RAW YAML Viewer with Custom Decorations -->
+            
             <vue-monaco-editor
               v-if="tab === 'raw'"
               v-model:value="code"
@@ -139,7 +139,7 @@
               style="height: 100%; width: 100%;"
             ></vue-monaco-editor>
 
-             <!-- DIFF Editor for seeing Fixes -->
+             
             <vue-monaco-diff-editor
               v-if="tab === 'diff'"
               :original="code"
@@ -150,10 +150,10 @@
               style="height: 100%; width: 100%;"
             ></vue-monaco-diff-editor>
 
-            <!-- Blast Radius Layout -->
+            
             <v-container v-if="tab === 'blast'" class="pa-6 fill-height align-start bg-grey-lighten-4">
               <v-row>
-                <!-- Reteta Graph (Mock visual setup cu echarts sau placeholders) -->
+                
                 <v-col cols="12" md="7">
                   <v-card class="gc-border h-100 pa-4" elevation="0">
                      <div class="text-subtitle-1 font-weight-medium mb-4">Traffic Flow Analysis</div>
@@ -167,17 +167,17 @@
                   <v-row>
                      <v-col cols="12">
                         <v-card class="gc-border" elevation="0" color="#FCE8E6">
-                          <v-card-title class="text-subtitle-2 font-weight-bold text-error px-4 pt-3 pb-0">Critical RBAC Privileges: Can Read Secrets</v-card-title>
+                          <v-card-title class="text-subtitle-2 font-weight-bold text-error px-4 pt-3 pb-0">RBAC Risk Assessment</v-card-title>
                           <v-card-text class="pa-4 text-body-2 text-error">
-                            Pod acts as service-account <strong class="font-mono">db-admin</strong> which holds excessive namespace permissions.
+                            {{ alert?.rbac_risk || 'No critical privileges detected.' }}
                           </v-card-text>
                         </v-card>
                      </v-col>
                      <v-col cols="12">
                         <v-card class="gc-border" elevation="0">
-                          <v-card-title class="text-subtitle-2 font-weight-bold text-high-emphasis px-4 pt-3 pb-0"><v-icon start color="primary">mdi-earth</v-icon> Egress: Unrestricted</v-card-title>
+                          <v-card-title class="text-subtitle-2 font-weight-bold text-high-emphasis px-4 pt-3 pb-0"><v-icon start color="primary">mdi-earth</v-icon> Network Posture</v-card-title>
                           <v-card-text class="pa-4 text-body-2 text-medium-emphasis">
-                            No default-deny Network Policy detected. Pod can communicate with the external internet, allowing exfiltration.
+                            {{ alert?.network_risk || 'Egress traffic restricted securely.' }}
                           </v-card-text>
                         </v-card>
                      </v-col>
@@ -186,7 +186,7 @@
               </v-row>
             </v-container>
 
-            <!-- Process Ancestry Tree Viewer -->
+            
             <v-container v-if="tab === 'tree'" class="pa-0 fill-height bg-white d-flex align-center justify-center">
               <div class="text-center pa-12" style="width:100%;">
                  <v-icon color="primary" size="x-large" class="mb-4">mdi-source-branch</v-icon>
@@ -195,13 +195,21 @@
                     A hierarchical mapping from container runtime executing till the alert trigger point.
                  </div>
                  
-                 <!-- Hardcoded CSS visual process tree demonstration for instant visual feedback -->
+                 
                  <div class="d-flex align-center justify-center">
-                    <v-chip color="grey" variant="outlined" size="large" class="font-weight-bold font-mono">containerd</v-chip>
-                    <div style="width:40px;height:2px;background:#DADCE0;"></div>
-                    <v-chip color="warning" variant="tonal" size="large" class="font-weight-bold font-mono">bash (PID 104)</v-chip>
-                    <div style="width:40px;height:2px;background:#DADCE0;"></div>
-                    <v-chip color="error" variant="flat" size="large" class="font-weight-bold font-mono pulse-animation">curl http://mal... (PID 142)</v-chip>
+                    <template v-if="parsedProcessTree.length > 0">
+                      <template v-for="(proc, index) in parsedProcessTree" :key="index">
+                         <v-chip :color="index === parsedProcessTree.length - 1 ? 'error' : (index === 0 ? 'grey' : 'warning')" 
+                                 :variant="index === parsedProcessTree.length - 1 ? 'flat' : 'outlined'" 
+                                 size="large" 
+                                 class="font-weight-bold font-mono"
+                                 :class="{ 'pulse-animation': index === parsedProcessTree.length - 1 }">
+                            {{ proc }}
+                         </v-chip>
+                         <div v-if="index < parsedProcessTree.length - 1" style="width:40px;height:2px;background:#DADCE0;"></div>
+                      </template>
+                    </template>
+                    <div v-else class="text-grey">No process ancestry data available for this sys-call.</div>
                  </div>
               </div>
             </v-container>
@@ -236,10 +244,32 @@ const priorityColor = computed(() => {
   return '#1A73E8'
 })
 
+
 const tab = ref('raw')
 const code = ref('')
 const fixedCode = ref('')
 const monacoEditorInstance = ref<any>(null)
+
+// NEW DYNAMIC COMPUTED DEMOS
+const parsedProcessTree = computed(() => {
+  if (!alert.value || !alert.value.process_tree) return [];
+  try {
+     const tree = JSON.parse(alert.value.process_tree);
+     // Usually from falco it comes [parent, grandparent, root]. We reverse it to [root -> ..., parent] and append the actual process
+     if (Array.isArray(tree)) {
+       return tree.reverse().concat(["Malicious Trigger Process"]);
+     }
+  } catch(e) {
+     return [];
+  }
+  return [];
+});
+
+const imageIncidentCount = computed(() => {
+  if (!alert.value || !alert.value.container_image) return 1;
+  return store.alerts.filter(a => a.container_image === alert.value!.container_image).length;
+});
+
 
 // Monaco Editor Config matching Google Cloud Shell
 const editorOptions = {

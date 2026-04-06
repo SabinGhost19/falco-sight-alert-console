@@ -10,6 +10,11 @@ export interface Alert {
   namespace: string
   pod_name: string
   container_name: string
+  container_image: string
+  process_tree: string
+  mitre_tags: string
+  rbac_risk: string
+  network_risk: string
   manifest_yaml: string
   vulnerable_lines: string
   talon_action: string
