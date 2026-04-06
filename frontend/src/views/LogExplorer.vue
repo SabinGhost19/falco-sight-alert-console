@@ -1,11 +1,11 @@
 <template>
   <v-container fluid class="pa-6">
-    <div class="text-h5 font-weight-medium mb-1 text-grey-darken-4">Alerts Explorer</div>
-    <div class="text-body-2 text-grey-darken-1 mb-6">Perform Threat Hunting across your generated Kubernetes security incidents.</div>
+    <div class="text-h5 font-weight-medium mb-1 text-high-emphasis">Alerts Explorer</div>
+    <div class="text-body-2 text-medium-emphasis mb-6">Perform Threat Hunting across your generated Kubernetes security incidents.</div>
 
-    <v-card class="gc-border pb-0" color="#FFFFFF">
-      <v-toolbar color="white" flat class="border-b gc-border px-2">
-         <v-toolbar-title class="text-subtitle-1 font-weight-medium text-grey-darken-3">
+    <v-card class="gc-border pb-0" color="surface">
+      <v-toolbar color="surface" flat class="border-b gc-border px-2">
+         <v-toolbar-title class="text-subtitle-1 font-weight-medium text-high-emphasis">
             Security Alerts
          </v-toolbar-title>
          <v-spacer></v-spacer>
@@ -41,12 +41,12 @@
         
         <-> Timestamp Formatted -->
         <template v-slot:item.created_at="{ item }">
-           <span class="text-body-2 text-grey-darken-2">{{ formatDate(item.created_at) }}</span>
+           <span class="text-body-2 text-medium-emphasis">{{ formatDate(item.created_at) }}</span>
         </template>
 
         <-> Rule Name -->
         <template v-slot:item.rule="{ item }">
-           <span class="font-weight-medium text-grey-darken-4">{{ item.rule }}</span>
+           <span class="font-weight-medium text-high-emphasis">{{ item.rule }}</span>
         </template>
 
         <-> Workload Details -->
@@ -54,7 +54,7 @@
            <div class="d-flex align-center">
               <v-icon color="#326CE5" size="small" class="mr-2">mdi-kubernetes</v-icon>
               <span class="font-weight-bold text-primary">{{ item.namespace }}</span>
-              <span class="text-grey-darken-1 mx-1">/</span>
+              <span class="text-medium-emphasis mx-1">/</span>
               <span class="text-body-2">{{ item.pod_name }}</span>
            </div>
         </template>

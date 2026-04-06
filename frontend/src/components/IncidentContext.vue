@@ -13,41 +13,41 @@
           <-> Alert Header -->
           <div class="d-flex align-center mb-3">
             <v-chip :color="priorityColor" size="small" variant="flat" class="mr-3 font-weight-bold text-white px-3">{{ alert.priority }}</v-chip>
-            <span class="text-caption text-grey-darken-1 font-weight-medium">{{ new Date(alert.created_at).toLocaleString() }}</span>
+            <span class="text-caption text-medium-emphasis font-weight-medium">{{ new Date(alert.created_at).toLocaleString() }}</span>
           </div>
 
-          <h2 class="text-h5 font-weight-medium text-grey-darken-4 mb-2" style="line-height: 1.3">{{ alert.rule }}</h2>
+          <h2 class="text-h5 font-weight-medium text-high-emphasis mb-2" style="line-height: 1.3">{{ alert.rule }}</h2>
           
           <v-card class="bg-grey-lighten-4 gc-border pa-3 mb-6 mt-4" elevation="0">
-             <div class="text-caption font-weight-bold text-grey-darken-2 mb-1 text-uppercase">Raw Event Message</div>
-             <p class="text-body-2 font-monospace text-grey-darken-4 mb-0" style="word-break: break-word;">{{ alert.message }}</p>
+             <div class="text-caption font-weight-bold text-medium-emphasis mb-1 text-uppercase">Raw Event Message</div>
+             <p class="text-body-2 font-monospace text-high-emphasis mb-0" style="word-break: break-word;">{{ alert.message }}</p>
           </v-card>
 
           <-> Corelate K8s Workload Details (GCP style key-value) -->
           <div class="mb-6">
-            <h3 class="text-subtitle-2 font-weight-bold text-grey-darken-2 mb-3 text-uppercase border-b gc-border pb-2">Target Workload</h3>
+            <h3 class="text-subtitle-2 font-weight-bold text-medium-emphasis mb-3 text-uppercase border-b gc-border pb-2">Target Workload</h3>
             
             <v-row no-gutters class="mb-2">
-               <v-col cols="4"><span class="text-body-2 text-grey-darken-1">Cluster</span></v-col>
-               <v-col cols="8"><span class="text-body-2 font-weight-medium text-grey-darken-4">production-cluster-01</span></v-col>
+               <v-col cols="4"><span class="text-body-2 text-medium-emphasis">Cluster</span></v-col>
+               <v-col cols="8"><span class="text-body-2 font-weight-medium text-high-emphasis">production-cluster-01</span></v-col>
             </v-row>
             <v-row no-gutters class="mb-2">
-               <v-col cols="4"><span class="text-body-2 text-grey-darken-1">Namespace</span></v-col>
+               <v-col cols="4"><span class="text-body-2 text-medium-emphasis">Namespace</span></v-col>
                <v-col cols="8"><span class="text-body-2 font-weight-medium text-primary cursor-pointer">{{ alert.namespace }}</span></v-col>
             </v-row>
             <v-row no-gutters class="mb-2">
-               <v-col cols="4"><span class="text-body-2 text-grey-darken-1">Pod</span></v-col>
+               <v-col cols="4"><span class="text-body-2 text-medium-emphasis">Pod</span></v-col>
                <v-col cols="8"><span class="text-body-2 font-weight-medium text-primary cursor-pointer">{{ alert.pod_name }}</span></v-col>
             </v-row>
             <v-row no-gutters v-if="alert.container_name">
-               <v-col cols="4"><span class="text-body-2 text-grey-darken-1">Container</span></v-col>
-               <v-col cols="8"><span class="text-body-2 font-weight-medium text-grey-darken-4">{{ alert.container_name }}</span></v-col>
+               <v-col cols="4"><span class="text-body-2 text-medium-emphasis">Container</span></v-col>
+               <v-col cols="8"><span class="text-body-2 font-weight-medium text-high-emphasis">{{ alert.container_name }}</span></v-col>
             </v-row>
           </div>
 
           <-> Falco Talon Action Center (SOAR) -->
           <div class="mt-8">
-            <h3 class="text-subtitle-2 font-weight-bold text-grey-darken-2 mb-4 text-uppercase border-b gc-border pb-2">Response & Remediation</h3>
+            <h3 class="text-subtitle-2 font-weight-bold text-medium-emphasis mb-4 text-uppercase border-b gc-border pb-2">Response & Remediation</h3>
             
             <-> Timeline / Stepper visualization -->
             <div class="d-flex align-start mb-4">
@@ -60,12 +60,12 @@
               </div>
               <div>
                  <div class="mb-4">
-                    <div class="text-body-2 font-weight-bold text-grey-darken-4">Threat Detected</div>
+                    <div class="text-body-2 font-weight-bold text-high-emphasis">Threat Detected</div>
                     <div class="text-caption text-grey">Falco engine intercepted system call.</div>
                  </div>
                  
                  <div>
-                    <div class="text-body-2 font-weight-bold" :class="alert.talon_status ? 'text-success' : 'text-grey-darken-4'">
+                    <div class="text-body-2 font-weight-bold" :class="alert.talon_status ? 'text-success' : 'text-high-emphasis'">
                        SOAR Automation (Talon)
                     </div>
                     <div class="text-caption text-grey" v-if="alert.talon_status">
@@ -109,8 +109,8 @@
             <!-- Empty State (Graceful Degradation) -->
             <div v-if="!code || code.trim() === ''" class="d-flex flex-column justify-center align-center h-100 bg-grey-lighten-4" style="position: absolute; width: 100%; z-index: 10;">
               <v-icon color="warning" size="64" class="mb-4">mdi-alert-circle-outline</v-icon>
-              <div class="text-h6 text-grey-darken-3 font-weight-medium">Manifest unavailable</div>
-              <div class="text-body-2 text-grey-darken-1 text-center px-12 mt-2">
+              <div class="text-h6 text-high-emphasis font-weight-medium">Manifest unavailable</div>
+              <div class="text-body-2 text-medium-emphasis text-center px-12 mt-2">
                 The YAML structure could not be retrieved from the Kubernetes API. The workload might have been deleted, or RBAC permissions are denying access.
               </div>
             </div>

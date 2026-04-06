@@ -1,16 +1,16 @@
 <template>
   <v-app>
     <-> Top Navigation Bar -->
-    <v-app-bar color="#FFFFFF" elevation="0" border="b" v-if="authStore.isAuthenticated" class="gc-border" density="compact">
+    <v-app-bar color="surface" elevation="0" border="b" v-if="authStore.isAuthenticated" density="compact">
       <div class="px-4 d-flex align-center w-100">
-        <v-btn icon="mdi-menu" variant="text" size="small" color="#5F6368" @click="drawer = !drawer"></v-btn>
+        <v-btn icon="mdi-menu" variant="text" size="small" color="info" @click="drawer = !drawer"></v-btn>
 
         <-> Brand -->
         <img src="@/assets/logo.png" alt="Falco Logo" class="ml-2 mr-2" style="height: 26px; cursor: pointer" @click="router.push('/')" />
-        <span class="font-weight-medium text-grey-darken-3 text-subtitle-1" style="cursor: pointer" @click="router.push('/')">
+        <span class="font-weight-medium text-high-emphasis text-subtitle-1" style="cursor: pointer" @click="router.push('/')">
           FalcoSight
         </span>
-        <span class="ml-2 text-grey text-subtitle-2 font-italic border-l pl-2 border-opacity-50">Command Center</span>
+        <span class="ml-2 text-medium-emphasis text-subtitle-2 font-italic border-l pl-2 border-opacity-50">Command Center</span>
 
         <v-spacer></v-spacer>
 
@@ -21,26 +21,29 @@
               production-cluster-01
             </v-btn>
           </template>
-          <v-list density="compact" class="gc-border">
+          <v-list density="compact">
             <v-list-item><v-list-item-title class="text-caption">sandbox-dev</v-list-item-title></v-list-item>
             <v-list-item><v-list-item-title class="text-caption font-weight-bold">production-cluster-01</v-list-item-title></v-list-item>
           </v-list>
         </v-menu>
 
         <-> Helper Icons (search, help, notifications) -->
-        <v-btn icon="mdi-magnify" variant="text" size="small" color="#5F6368" class="ml-2"></v-btn>
-        <v-btn icon="mdi-help-circle-outline" variant="text" size="small" color="#5F6368"></v-btn>
+        <v-btn icon="mdi-magnify" variant="text" size="small" color="info" class="ml-2"></v-btn>
+        <v-btn icon="mdi-help-circle-outline" variant="text" size="small" color="info"></v-btn>
+        
+        <-> Theme Toggle -->
+        <v-btn :icon="theme.global.current.value.dark ? 'mdi-weather-night' : 'mdi-weather-sunny'" variant="text" size="small" color="info" class="ml-1 mr-2" @click="toggleTheme"></v-btn>
         
         <-> User Profile Avatar & Logout -->
         <v-menu>
           <template v-slot:activator="{ props }">
-            <div class="ml-4 pl-1 align-center d-flex cursor-pointer" v-bind="props">
-               <v-avatar size="32" color="blue-lighten-4">
+            <div class="ml-2 pl-1 align-center d-flex cursor-pointer" v-bind="props">
+               <v-avatar size="32" color="secondary">
                   <span class="text-primary text-subtitle-2 font-weight-bold">{{ (authStore.user || 'Admin').charAt(0) }}</span>
                </v-avatar>
             </div>
           </template>
-          <v-list density="compact" class="gc-border">
+          <v-list density="compact">
             <v-list-item @click="handleLogout">
               <template v-slot:prepend><v-icon color="error" size="small">mdi-logout</v-icon></template>
               <v-list-item-title class="text-error font-weight-medium">Sign out</v-list-item-title>
@@ -51,9 +54,9 @@
     </v-app-bar>
 
     <-> Sidebar navigation (Navigation Drawer) -->
-    <v-navigation-drawer v-model="drawer" v-if="authStore.isAuthenticated" permanent elevation="0" border="r" color="#F8F9FA" class="gc-border">
+    <v-navigation-drawer v-model="drawer" v-if="authStore.isAuthenticated" permanent elevation="0" border="r" color="background">
       <v-list density="compact" nav class="px-2 pt-4">
-        <v-list-subheader class="text-uppercase text-caption font-weight-bold text-grey-darken-1 mb-2">Security Posture</v-list-subheader>
+        <v-list-subheader class="text-uppercase text-caption font-weight-bold text-medium-emphasis mb-2">Security Posture</v-list-subheader>
         
         <v-list-item to="/" prepend-icon="mdi-view-dashboard-outline" color="primary" rounded="sm" exact>
           <v-list-item-title class="font-weight-medium text-body-2">Overview</v-list-item-title>
@@ -64,7 +67,7 @@
         </v-list-item>
 
         <v-divider class="my-4"></v-divider>
-        <v-list-subheader class="text-uppercase text-caption font-weight-bold text-grey-darken-1 mb-2">Response Automation</v-list-subheader>
+        <v-list-subheader class="text-uppercase text-caption font-weight-bold text-medium-emphasis mb-2">Response Automation</v-list-subheader>
 
         <v-list-item to="/rules" prepend-icon="mdi-robot-outline" color="primary" rounded="sm">
           <v-list-item-title class="font-weight-medium text-body-2">Talon Actions (SOAR)</v-list-item-title>
@@ -93,11 +96,13 @@
 import { useAuthStore } from './store/auth'
 import { useRouter } from 'vue-router'
 import { onMounted, ref } from 'vue'
+import { useTheme } from 'vuetify'
 import axios from 'axios'
 import AppSnackbar from './components/AppSnackbar.vue'
 
 const authStore = useAuthStore()
 const router = useRouter()
+const theme = useTheme()
 const drawer = ref(true)
 
 const handleLogout = () => {
@@ -105,8 +110,20 @@ const handleLogout = () => {
   router.push('/login')
 }
 
+const toggleTheme = () => {
+  const isDark = theme.global.current.value.dark
+  const newTheme = isDark ? 'googleCloudTheme' : 'googleCloudDarkTheme'
+  theme.global.name.value = newTheme
+  localStorage.setItem('falcoTheme', newTheme)
+}
+
 // Ensure the token is attached across page reloads
 onMounted(() => {
+  const savedTheme = localStorage.getItem('falcoTheme')
+  if (savedTheme) {
+    theme.global.name.value = savedTheme
+  }
+
   if (authStore.token) {
     axios.defaults.headers.common['Authorization'] = `Bearer ${authStore.token}`
   }
@@ -123,11 +140,11 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 .bg-background {
-  background-color: #F8F9FA !important;
+  background-color: rgb(var(--v-theme-background)) !important;
 }
 /* Google Cloud border standard */
 .gc-border {
-  border-color: #DADCE0 !important;
+  border-color: rgba(var(--v-border-color), var(--v-border-opacity)) !important;
 }
 
 .main-container {
@@ -137,11 +154,11 @@ body {
 
 /* Material Design specific link selections */
 .v-list-item--active {
-  background-color: #E8F0FE;
-  color: #1A73E8;
+  background-color: rgb(var(--v-theme-secondary));
+  color: rgb(var(--v-theme-primary));
 }
 
 .v-list-item--active .v-icon {
-  color: #1A73E8 !important;
+  color: rgb(var(--v-theme-primary)) !important;
 }
 </style>

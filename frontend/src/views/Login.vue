@@ -1,12 +1,12 @@
 <template>
   <v-container class="fill-height bg-background d-flex align-center justify-center">
-    <v-card class="elevation-4 pb-4" max-width="400" width="100%" rounded="lg">
+    <v-card class="elevation-4 pb-4 bg-surface gc-border" max-width="400" width="100%" rounded="lg">
       <v-card-title class="d-flex justify-center align-center pt-6 pb-2">
         <img src="@/assets/logo.png" alt="Falco Logo" style="height: 36px" class="mr-3" />
-        <span class="text-h5 font-weight-medium text-grey-darken-3">FalcoSight</span>
+        <span class="text-h5 font-weight-medium text-high-emphasis">FalcoSight</span>
       </v-card-title>
       
-      <v-card-text class="text-center text-body-2 text-grey-darken-1 mb-4">
+      <v-card-text class="text-center text-body-2 text-medium-emphasis mb-4">
         Sign in to view Kubernetes Security Alerts
       </v-card-text>
 

@@ -12,7 +12,7 @@
             <v-icon start icon="mdi-plus" /> New Rule
         </v-btn>
       </v-card-title>
-      <v-card-text class="pt-4 text-body-1 text-grey-darken-2">
+      <v-card-text class="pt-4 text-body-1 text-medium-emphasis">
         Aici se mapează fiecare alertă (Regulă Falco) pe care o generează securitatea clusterului tău către o acțiune automată de remediere SOAR prin Falco Talon. Modul "Audit" va simula acțiunea fără s-o execute.
       </v-card-text>
     </v-card>

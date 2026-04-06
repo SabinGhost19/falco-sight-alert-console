@@ -45,6 +45,20 @@ export default createVuetify({
           background: '#F8F9FA', // Clean grey background
           surface: '#FFFFFF',
         }
+      },
+      googleCloudDarkTheme: {
+        dark: true,
+        colors: {
+          primary: '#8AB4F8',    // Google Blue Light
+          secondary: '#3C4043',  // Dark grey background for active items
+          accent: '#8AB4F8',
+          error: '#F28B82',      // Google Red Light
+          warning: '#FDE293',    // Google Yellow Light
+          info: '#9AA0A6',       // Light Grey (Text)
+          success: '#81C995',    // Google Green Light
+          background: '#202124', // Dark background
+          surface: '#292A2D',    // Dark surface
+        }
       }
     }
   }

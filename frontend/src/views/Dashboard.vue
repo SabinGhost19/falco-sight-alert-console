@@ -1,14 +1,14 @@
 <template>
   <v-container fluid class="pa-6">
-    <div class="text-h5 font-weight-medium mb-1 text-grey-darken-4">Command Center</div>
-    <div class="text-body-2 text-grey-darken-1 mb-6">Overview of K8s workload security posture across your environments over the last 24h.</div>
+    <div class="text-h5 font-weight-medium mb-1 text-high-emphasis">Command Center</div>
+    <div class="text-body-2 text-medium-emphasis mb-6">Overview of K8s workload security posture across your environments over the last 24h.</div>
     
     <-> Summary Cards -->
     <v-row>
       <-> Total Alerts -->
       <v-col cols="12" md="3">
-        <v-card class="gc-border pb-2 d-flex flex-column justify-center px-4" height="120" color="#FFFFFF">
-          <div class="text-overline text-grey-darken-1 font-weight-medium d-flex align-center">
+        <v-card class="gc-border pb-2 d-flex flex-column justify-center px-4" height="120" color="surface">
+          <div class="text-overline text-medium-emphasis font-weight-medium d-flex align-center">
              TOTAL PREVENTIONS <v-icon size="small" class="ml-auto" color="grey-lighten-1">mdi-bell-outline</v-icon>
           </div>
           <div class="text-h3 font-weight-regular mt-1">{{ store.alerts.length }}</div>
@@ -16,8 +16,8 @@
       </v-col>
       <-> Critical Threats -->
       <v-col cols="12" md="3">
-        <v-card class="gc-border pb-2 d-flex flex-column justify-center px-4" height="120" color="#FFFFFF">
-          <div class="text-overline text-grey-darken-1 font-weight-medium d-flex align-center">
+        <v-card class="gc-border pb-2 d-flex flex-column justify-center px-4" height="120" color="surface">
+          <div class="text-overline text-medium-emphasis font-weight-medium d-flex align-center">
              CRITICAL THREATS <v-icon size="small" class="ml-auto" color="error">mdi-alert-circle-outline</v-icon>
           </div>
           <div class="text-h3 font-weight-regular mt-1 text-error">{{ highPriority.length }}</div>
@@ -25,8 +25,8 @@
       </v-col>
       <-> Talon Status -->
       <v-col cols="12" md="3">
-        <v-card class="gc-border pb-2 d-flex flex-column justify-center px-4" height="120" color="#FFFFFF">
-          <div class="text-overline text-grey-darken-1 font-weight-medium d-flex align-center">
+        <v-card class="gc-border pb-2 d-flex flex-column justify-center px-4" height="120" color="surface">
+          <div class="text-overline text-medium-emphasis font-weight-medium d-flex align-center">
              TALON REMEDIATIONS <v-icon size="small" class="ml-auto" color="success">mdi-robot-outline</v-icon>
           </div>
           <div class="text-h3 font-weight-regular mt-1 text-success">{{ talonRemediated }}</div>
@@ -34,8 +34,8 @@
       </v-col>
       <-> Workloads Affected -->
       <v-col cols="12" md="3">
-        <v-card class="gc-border pb-2 d-flex flex-column justify-center px-4" height="120" color="#FFFFFF">
-          <div class="text-overline text-grey-darken-1 font-weight-medium d-flex align-center">
+        <v-card class="gc-border pb-2 d-flex flex-column justify-center px-4" height="120" color="surface">
+          <div class="text-overline text-medium-emphasis font-weight-medium d-flex align-center">
              WORKLOADS AFFECTED <v-icon size="small" class="ml-auto" color="primary">mdi-kubernetes</v-icon>
           </div>
           <div class="text-h3 font-weight-regular mt-1 text-primary">{{ uniqueWorkloads }}</div>
@@ -47,8 +47,8 @@
     <v-row class="mt-4">
        <-> Trend Line Chart -->
       <v-col cols="12" md="8">
-        <v-card class="gc-border h-100" color="#FFFFFF">
-          <v-card-title class="text-subtitle-1 font-weight-medium text-grey-darken-3 border-b gc-border py-3">Alerts Trendline (24h)</v-card-title>
+        <v-card class="gc-border h-100" color="surface">
+          <v-card-title class="text-subtitle-1 font-weight-medium text-high-emphasis border-b gc-border py-3">Alerts Trendline (24h)</v-card-title>
           <v-card-text class="pt-4 px-2 pb-0">
              <-> Using ApexCharts -->
              <apexchart type="area" height="280" :options="chartData.options" :series="chartData.series"></apexchart>
@@ -58,8 +58,8 @@
 
       <-> Top Offenders Table -->
       <v-col cols="12" md="4">
-        <v-card class="gc-border h-100" color="#FFFFFF">
-          <v-card-title class="text-subtitle-1 font-weight-medium text-grey-darken-3 border-b gc-border py-3">Top Vulnerable Workloads</v-card-title>
+        <v-card class="gc-border h-100" color="surface">
+          <v-card-title class="text-subtitle-1 font-weight-medium text-high-emphasis border-b gc-border py-3">Top Vulnerable Workloads</v-card-title>
           <v-card-text class="pa-0">
              <v-list density="compact" lines="two">
                <v-list-item v-for="(item, i) in topOffenders" :key="i" class="border-b gc-border" @click="goToLogs(item.pod_name)">
