@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/SabinGhost19/falco-sight-alert-console/compare/v1.1.6...v1.2.0) (2026-04-06)
+
+
+### Features
+
+* **ui:** add visual logic for mitre tactics, blast radius and process ancestry ([e2a7c16](https://github.com/SabinGhost19/falco-sight-alert-console/commit/e2a7c16336b9107cfd7021c68c105c6d3ca36dc5))
+
 ## [1.1.6](https://github.com/SabinGhost19/falco-sight-alert-console/compare/v1.1.5...v1.1.6) (2026-04-06)
 
 
