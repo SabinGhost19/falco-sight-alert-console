@@ -1,3 +1,10 @@
+## [1.1.4](https://github.com/SabinGhost19/falco-sight-alert-console/compare/v1.1.3...v1.1.4) (2026-04-06)
+
+
+### Bug Fixes
+
+* **backend:** safely map string to interface in OutputFields struct to prevent JSON parsing panics with Talon Action/Falco Alerts ([1f4647b](https://github.com/SabinGhost19/falco-sight-alert-console/commit/1f4647b6c0f03c641b15f1c1331bdae4aeffd018))
+
 ## [1.1.3](https://github.com/SabinGhost19/falco-sight-alert-console/compare/v1.1.2...v1.1.3) (2026-04-06)
 
 
