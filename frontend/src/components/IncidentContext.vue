@@ -13,7 +13,7 @@
           
           <div class="d-flex align-center mb-3">
             <v-chip :color="priorityColor" size="small" variant="flat" class="mr-3 font-weight-bold text-white px-3">{{ alert.priority }}</v-chip>
-            <span class="text-caption text-medium-emphasis font-weight-medium">{{ new Date(alert.created_at).toLocaleString() }}</span>
+            <span class="text-caption text-medium-emphasis font-weight-medium">{{ new Date(alert.created_at).toLocaleTimeString() }} {{ new Date(alert.created_at).toLocaleDateString() }}</span>
           </div>
 
           <h2 class="text-h5 font-weight-medium text-high-emphasis mb-2" style="line-height: 1.3">{{ alert.rule }}</h2>

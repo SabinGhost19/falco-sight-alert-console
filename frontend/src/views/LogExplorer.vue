@@ -76,7 +76,7 @@
 import { ref, onMounted, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAlertsStore } from '../store/alerts'
-import { formatDistanceToNow, parseISO } from 'date-fns'
+import { format, parseISO } from 'date-fns'
 
 const store = useAlertsStore()
 const router = useRouter()
@@ -108,7 +108,7 @@ const getPriorityColor = (priority: string) => {
 const formatDate = (isoString: string) => {
    if(!isoString) return 'Unknown'
    try {
-      return formatDistanceToNow(parseISO(isoString), { addSuffix: true })
+      return format(parseISO(isoString), 'HH:mm:ss dd/MM/yyyy')
    } catch(e) {
       return isoString
    }

@@ -52,25 +52,49 @@ func HandleFalcoWebhook(c *fiber.Ctx) error {
 		if bytes, err := json.Marshal(val); err == nil {
 			processTree = string(bytes)
 		}
-        } else {
-                // Fallback for rules that don't output %proc.aname specifically
-                // Falco's proc.aname returns [parent, grandparent, root].
-                var ancestors []string
-                if pName, ok1 := payload.OutputFields["proc.pname"].(string); ok1 && pName != "" {
-                        ancestors = append(ancestors, string(pName))
-                } else if cName, ok2 := payload.OutputFields["k8s.container.name"].(string); ok2 {
-                        ancestors = append(ancestors, "Container: " + string(cName))
-                }
-                ancestors = append(ancestors, "[Container Runtime]")
+	} else {
+		// Fallback for rules that don't output %proc.aname specifically
+		// Falco's proc.aname returns [parent, grandparent, root].
+		var ancestors []string
+		if pName, ok1 := payload.OutputFields["proc.pname"].(string); ok1 && pName != "" {
+			ancestors = append(ancestors, string(pName))
+		} else if cName, ok2 := payload.OutputFields["k8s.container.name"].(string); ok2 {
+			ancestors = append(ancestors, "Container: " + string(cName))
+		}
+		ancestors = append(ancestors, "[Container Runtime]")
 
-                if bytes, err := json.Marshal(ancestors); err == nil {
-                        processTree = string(bytes)
-                }
+		if bytes, err := json.Marshal(ancestors); err == nil {
+			processTree = string(bytes)
+		}
+	}
+
+	// Mitre Tags
+	if len(payload.Tags) > 0 {
+		if bytes, err := json.Marshal(payload.Tags); err == nil {
 			mitreTags = string(bytes)
 		}
 	}
 
+	// Host-Level fallbacks
+	if podName == "" {
+		podName = "N/A (Host Level)"
+	}
+	if namespace == "" {
+		namespace = "host-network"
+	}
+
+	// Native Time Extraction
+	var alertTime time.Time
+	if parsedTime, err := time.Parse(time.RFC3339Nano, payload.Time); err == nil {
+		alertTime = parsedTime
+	} else if parsedTime, err := time.Parse(time.RFC3339, payload.Time); err == nil {
+		alertTime = parsedTime
+	} else {
+		alertTime = time.Now()
+	}
+
 	alertRecord := models.AlertModel{
+		CreatedAt:      alertTime,
 		Priority:       payload.Priority,
 		Rule:           payload.Rule,
 		Message:        payload.Output,
