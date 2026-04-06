@@ -1,16 +1,16 @@
 <template>
   <v-container fluid class="pa-0 h-100 fill-height bg-background">
-    <-> Split Screen Layout -->
+    <!-- Split Screen Layout -->
     <v-row no-gutters class="fill-height pb-0 mb-0">
       
-      <-> Left Panel: Context & Falco Alert Info -->
+      <!-- Left Panel: Context & Falco Alert Info -->
       <v-col cols="12" md="4" class="border-e gc-border bg-white pa-6 overflow-auto fill-height">
         <v-btn variant="text" prepend-icon="mdi-arrow-left" color="primary" class="mb-6 text-none pl-0 ml-n2" @click="router.push('/logs')">
           Back to Alerts
         </v-btn>
 
         <template v-if="alert">
-          <-> Alert Header -->
+          <!-- Alert Header -->
           <div class="d-flex align-center mb-3">
             <v-chip :color="priorityColor" size="small" variant="flat" class="mr-3 font-weight-bold text-white px-3">{{ alert.priority }}</v-chip>
             <span class="text-caption text-medium-emphasis font-weight-medium">{{ new Date(alert.created_at).toLocaleString() }}</span>
@@ -23,7 +23,7 @@
              <p class="text-body-2 font-monospace text-high-emphasis mb-0" style="word-break: break-word;">{{ alert.message }}</p>
           </v-card>
 
-          <-> Corelate K8s Workload Details (GCP style key-value) -->
+          <!-- Corelate K8s Workload Details (GCP style key-value) -->
           <div class="mb-6">
             <h3 class="text-subtitle-2 font-weight-bold text-medium-emphasis mb-3 text-uppercase border-b gc-border pb-2">Target Workload</h3>
             
@@ -45,11 +45,11 @@
             </v-row>
           </div>
 
-          <-> Falco Talon Action Center (SOAR) -->
+          <!-- Falco Talon Action Center (SOAR) -->
           <div class="mt-8">
             <h3 class="text-subtitle-2 font-weight-bold text-medium-emphasis mb-4 text-uppercase border-b gc-border pb-2">Response & Remediation</h3>
             
-            <-> Timeline / Stepper visualization -->
+            <!-- Timeline / Stepper visualization -->
             <div class="d-flex align-start mb-4">
               <div class="d-flex flex-column align-center mr-4">
                  <v-icon color="error" size="small">mdi-shield-alert</v-icon>
@@ -75,7 +75,7 @@
                        No automatic policies matched or running in Audit Mode.
                     </div>
 
-                    <-> Manual Overrides if unchecked -->
+                    <!-- Manual Overrides if unchecked -->
                     <div v-if="!alert.talon_status" class="mt-2 d-flex flex-column gap-2">
                        <v-btn color="primary" class="text-none font-weight-medium" variant="flat" size="small" @click="triggerAction('network_isolate')" :disabled="!alert" prepend-icon="mdi-lan-disconnect">
                           Manual Override: Isolate Pod
@@ -91,7 +91,7 @@
         </template>
       </v-col>
 
-      <-> Right Panel: Code Viewer (Monaco Editor) & Fixes -->
+      <!-- Right Panel: Code Viewer (Monaco Editor) & Fixes -->
       <v-col cols="12" md="8" class="bg-grey-darken-4 d-flex flex-column fill-height">
         <v-toolbar color="#202124" flat density="compact" class="border-b" style="border-bottom-color: #3C4043 !important;">
           <v-tabs v-model="tab" color="primary" bg-color="transparent" slider-color="primary" density="compact">
@@ -104,7 +104,7 @@
           </v-btn>
         </v-toolbar>
 
-        <-> Container for Monaco Editor -->
+        <!-- Container for Monaco Editor -->
         <div class="flex-grow-1 position-relative" style="height: calc(100vh - 48px); overflow: hidden;">            
             <!-- Empty State (Graceful Degradation) -->
             <div v-if="!code || code.trim() === ''" class="d-flex flex-column justify-center align-center h-100 bg-grey-lighten-4" style="position: absolute; width: 100%; z-index: 10;">
@@ -114,7 +114,7 @@
                 The YAML structure could not be retrieved from the Kubernetes API. The workload might have been deleted, or RBAC permissions are denying access.
               </div>
             </div>
-            <-> RAW YAML Viewer with Custom Decorations -->
+            <!-- RAW YAML Viewer with Custom Decorations -->
             <vue-monaco-editor
               v-if="tab === 'raw'"
               v-model:value="code"
@@ -125,7 +125,7 @@
               style="height: 100%; width: 100%;"
             ></vue-monaco-editor>
 
-             <-> DIFF Editor for seeing Fixes -->
+             <!-- DIFF Editor for seeing Fixes -->
             <vue-monaco-diff-editor
               v-if="tab === 'diff'"
               :original="code"

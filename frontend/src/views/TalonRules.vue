@@ -51,7 +51,7 @@
       </template>
     </v-data-table>
 
-    <-> Dialog for new rule -->
+    <!-- Dialog for new rule -->
     <v-dialog v-model="dialog" max-width="500">
       <v-card>
         <v-card-title>Create Talon Rule</v-card-title>

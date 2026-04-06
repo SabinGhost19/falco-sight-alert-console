@@ -32,24 +32,24 @@
         density="comfortable"
         @click:row="openIncidentContext"
       >
-        <-> Severity -->
+        <!-- Severity -->
         <template v-slot:item.priority="{ item }">
            <v-chip :color="getPriorityColor(item.priority)" size="small" variant="flat" class="font-weight-bold text-white">
                {{ item.priority }}
            </v-chip>
         </template>
         
-        <-> Timestamp Formatted -->
+        <!-- Timestamp Formatted -->
         <template v-slot:item.created_at="{ item }">
            <span class="text-body-2 text-medium-emphasis">{{ formatDate(item.created_at) }}</span>
         </template>
 
-        <-> Rule Name -->
+        <!-- Rule Name -->
         <template v-slot:item.rule="{ item }">
            <span class="font-weight-medium text-high-emphasis">{{ item.rule }}</span>
         </template>
 
-        <-> Workload Details -->
+        <!-- Workload Details -->
         <template v-slot:item.pod_name="{ item }">
            <div class="d-flex align-center">
               <v-icon color="#326CE5" size="small" class="mr-2">mdi-kubernetes</v-icon>
@@ -59,7 +59,7 @@
            </div>
         </template>
 
-        <-> Talon Action Status -->
+        <!-- Talon Action Status -->
         <template v-slot:item.talon_status="{ item }">
            <div v-if="item.talon_status" class="d-flex align-center">
               <v-icon size="small" :color="item.talon_status === 'Success' ? 'success' : 'warning'" class="mr-1">mdi-robot-outline</v-icon>

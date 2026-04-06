@@ -3,9 +3,9 @@
     <div class="text-h5 font-weight-medium mb-1 text-high-emphasis">Command Center</div>
     <div class="text-body-2 text-medium-emphasis mb-6">Overview of K8s workload security posture across your environments over the last 24h.</div>
     
-    <-> Summary Cards -->
+    <!-- Summary Cards -->
     <v-row>
-      <-> Total Alerts -->
+      <!-- Total Alerts -->
       <v-col cols="12" md="3">
         <v-card class="gc-border pb-2 d-flex flex-column justify-center px-4" height="120" color="surface">
           <div class="text-overline text-medium-emphasis font-weight-medium d-flex align-center">
@@ -14,7 +14,7 @@
           <div class="text-h3 font-weight-regular mt-1">{{ store.alerts.length }}</div>
         </v-card>
       </v-col>
-      <-> Critical Threats -->
+      <!-- Critical Threats -->
       <v-col cols="12" md="3">
         <v-card class="gc-border pb-2 d-flex flex-column justify-center px-4" height="120" color="surface">
           <div class="text-overline text-medium-emphasis font-weight-medium d-flex align-center">
@@ -23,7 +23,7 @@
           <div class="text-h3 font-weight-regular mt-1 text-error">{{ highPriority.length }}</div>
         </v-card>
       </v-col>
-      <-> Talon Status -->
+      <!-- Talon Status -->
       <v-col cols="12" md="3">
         <v-card class="gc-border pb-2 d-flex flex-column justify-center px-4" height="120" color="surface">
           <div class="text-overline text-medium-emphasis font-weight-medium d-flex align-center">
@@ -32,7 +32,7 @@
           <div class="text-h3 font-weight-regular mt-1 text-success">{{ talonRemediated }}</div>
         </v-card>
       </v-col>
-      <-> Workloads Affected -->
+      <!-- Workloads Affected -->
       <v-col cols="12" md="3">
         <v-card class="gc-border pb-2 d-flex flex-column justify-center px-4" height="120" color="surface">
           <div class="text-overline text-medium-emphasis font-weight-medium d-flex align-center">
@@ -43,20 +43,20 @@
       </v-col>
     </v-row>
 
-    <-> Charts & Analytics -->
+    <!-- Charts & Analytics -->
     <v-row class="mt-4">
-       <-> Trend Line Chart -->
+       <!-- Trend Line Chart -->
       <v-col cols="12" md="8">
         <v-card class="gc-border h-100" color="surface">
           <v-card-title class="text-subtitle-1 font-weight-medium text-high-emphasis border-b gc-border py-3">Alerts Trendline (24h)</v-card-title>
           <v-card-text class="pt-4 px-2 pb-0">
-             <-> Using ApexCharts -->
+             <!-- Using ApexCharts -->
              <apexchart type="area" height="280" :options="chartData.options" :series="chartData.series"></apexchart>
           </v-card-text>
         </v-card>
       </v-col>
 
-      <-> Top Offenders Table -->
+      <!-- Top Offenders Table -->
       <v-col cols="12" md="4">
         <v-card class="gc-border h-100" color="surface">
           <v-card-title class="text-subtitle-1 font-weight-medium text-high-emphasis border-b gc-border py-3">Top Vulnerable Workloads</v-card-title>

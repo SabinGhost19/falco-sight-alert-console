@@ -1,11 +1,11 @@
 <template>
   <v-app>
-    <-> Top Navigation Bar -->
+    <!-- Top Navigation Bar -->
     <v-app-bar color="surface" elevation="0" border="b" v-if="authStore.isAuthenticated" density="compact">
       <div class="px-4 d-flex align-center w-100">
         <v-btn icon="mdi-menu" variant="text" size="small" color="info" @click="drawer = !drawer"></v-btn>
 
-        <-> Brand -->
+        <!-- Brand -->
         <img src="./assets/logo.png" alt="Falco Logo" class="ml-2 mr-2" style="height: 26px; cursor: pointer" @click="router.push('/')" />
         <span class="font-weight-medium text-high-emphasis text-subtitle-1" style="cursor: pointer" @click="router.push('/')">
           FalcoSight
@@ -14,7 +14,7 @@
 
         <v-spacer></v-spacer>
 
-        <-> Project/Cluster Selector (GCP Style) -->
+        <!-- Project/Cluster Selector (GCP Style) -->
         <v-menu>
           <template v-slot:activator="{ props }">
             <v-btn v-bind="props" variant="text" class="text-none ml-4 text-primary font-weight-medium" append-icon="mdi-menu-down" prepend-icon="mdi-cloud">
@@ -27,14 +27,14 @@
           </v-list>
         </v-menu>
 
-        <-> Helper Icons (search, help, notifications) -->
+        <!-- Helper Icons (search, help, notifications) -->
         <v-btn icon="mdi-magnify" variant="text" size="small" color="info" class="ml-2"></v-btn>
         <v-btn icon="mdi-help-circle-outline" variant="text" size="small" color="info"></v-btn>
         
-        <-> Theme Toggle -->
+        <!-- Theme Toggle -->
         <v-btn :icon="theme.global.current.value.dark ? 'mdi-weather-night' : 'mdi-weather-sunny'" variant="text" size="small" color="info" class="ml-1 mr-2" @click="toggleTheme"></v-btn>
         
-        <-> User Profile Avatar & Logout -->
+        <!-- User Profile Avatar & Logout -->
         <v-menu>
           <template v-slot:activator="{ props }">
             <div class="ml-2 pl-1 align-center d-flex cursor-pointer" v-bind="props">
@@ -53,7 +53,7 @@
       </div>
     </v-app-bar>
 
-    <-> Sidebar navigation (Navigation Drawer) -->
+    <!-- Sidebar navigation (Navigation Drawer) -->
     <v-navigation-drawer v-model="drawer" v-if="authStore.isAuthenticated" permanent elevation="0" border="r" color="background">
       <v-list density="compact" nav class="px-2 pt-4">
         <v-list-subheader class="text-uppercase text-caption font-weight-bold text-medium-emphasis mb-2">Security Posture</v-list-subheader>
@@ -80,7 +80,7 @@
       </v-list>
     </v-navigation-drawer>
 
-    <-> Main Content Area -->
+    <!-- Main Content Area -->
     <!-- Notificări globale -->
     <AppSnackbar />
 
