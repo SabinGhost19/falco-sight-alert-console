@@ -17,12 +17,14 @@
     "chart.js": "^4.5.1",
     "date-fns": "^4.1.0",
     "dayjs": "^1.11.20",
+    "echarts": "^6.0.0",
     "monaco-editor": "^0.55.1",
     "pinia": "^3.0.4",
     "vue": "^3.5.32",
     "vue-chartjs": "^5.3.3",
     "vue-router": "^4.6.4",
     "vue3-apexcharts": "^1.11.1",
+    "vue3-echarts": "^1.1.0",
     "vuetify": "^4.0.1"
   },
   "devDependencies": {
