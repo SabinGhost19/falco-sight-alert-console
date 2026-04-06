@@ -1,3 +1,10 @@
+## [1.1.3](https://github.com/SabinGhost19/falco-sight-alert-console/compare/v1.1.2...v1.1.3) (2026-04-06)
+
+
+### Bug Fixes
+
+* **frontend:** link 'Policies' nav item to the external Zero Trust Dashboard (dashboard.devsecops.licenta.ro) instead of '#' ([0bed16e](https://github.com/SabinGhost19/falco-sight-alert-console/commit/0bed16e91f5c1ec772992f96660294dd63bbb835))
+
 ## [1.1.2](https://github.com/SabinGhost19/falco-sight-alert-console/compare/v1.1.1...v1.1.2) (2026-04-06)
 
 
