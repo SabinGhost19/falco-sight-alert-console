@@ -362,6 +362,3 @@ function setupCode() {
   animation: pulseRed 2s infinite;
 }
 </style>
-  background-color: #D93025 !important;
-}
-</style>
