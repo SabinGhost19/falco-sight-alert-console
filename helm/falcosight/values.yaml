@@ -8,7 +8,7 @@ backend:
   image:
     repository: ghcr.io/sabinghost19/falco-sight-alert-console-backend
     pullPolicy: IfNotPresent
-    tag: "d63f517"
+    tag: "b045e54"
   service:
     type: ClusterIP
     port: 3000
@@ -19,7 +19,7 @@ frontend:
   image:
     repository: ghcr.io/sabinghost19/falco-sight-alert-console-frontend
     pullPolicy: IfNotPresent
-    tag: "d63f517"
+    tag: "b045e54"
   service:
     type: ClusterIP
     port: 80
