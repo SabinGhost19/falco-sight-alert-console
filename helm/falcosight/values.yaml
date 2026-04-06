@@ -7,7 +7,7 @@ global:
 backend:
   replicaCount: 1
   image:
-    repository: falcosight-backend
+    repository: ghcr.io/sabinghost19/falco-sight-alert-console-backend
     pullPolicy: IfNotPresent
     tag: "595524c"
   service:
@@ -19,7 +19,7 @@ backend:
 frontend:
   replicaCount: 1
   image:
-    repository: falcosight-frontend
+    repository: ghcr.io/sabinghost19/falco-sight-alert-console-frontend
     pullPolicy: IfNotPresent
     tag: "595524c"
   service:
@@ -41,7 +41,7 @@ postgresql:
   enabled: true
   image:
     repository: timescale/timescaledb
-    tag: "595524c"
+    tag: "latest-pg15"
   database: "falcosight"
   username: "postgres"
   password: "postgrespassword"

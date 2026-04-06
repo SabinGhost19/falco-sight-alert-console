@@ -66,8 +66,8 @@ jobs:
           # The tag output format from docker metadata includes the ref, we only need the short sha
           TAG=$(echo "${{ github.sha }}" | cut -c1-7)
 
-          # Use yq or sed to update values.yaml
-          sed -i "s/tag: .*/tag: \"$TAG\"/" helm/falcosight/values.yaml
+          # Use yq to cleanly update ONLY backend and frontend without touching postgresql
+          yq eval -i ".backend.image.tag = \"$TAG\" | .frontend.image.tag = \"$TAG\"" helm/falcosight/values.yaml
 
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
