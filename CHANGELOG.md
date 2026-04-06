@@ -1,3 +1,10 @@
+## [1.1.5](https://github.com/SabinGhost19/falco-sight-alert-console/compare/v1.1.4...v1.1.5) (2026-04-06)
+
+
+### Bug Fixes
+
+* **backend:** async database insert and k8s correlator to prevent falco webhook timeouts ([edf48a0](https://github.com/SabinGhost19/falco-sight-alert-console/commit/edf48a0e2c88012a0c6ca309c440a8e66e71eb29))
+
 ## [1.1.4](https://github.com/SabinGhost19/falco-sight-alert-console/compare/v1.1.3...v1.1.4) (2026-04-06)
 
 
