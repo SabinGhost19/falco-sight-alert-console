@@ -1,3 +1,17 @@
+# [1.3.0](https://github.com/SabinGhost19/falco-sight-alert-console/compare/v1.2.0...v1.3.0) (2026-04-06)
+
+
+### Bug Fixes
+
+* **ui:** add missing ref import in Dashboard typescript to fix CI/CD build error ([bbf9683](https://github.com/SabinGhost19/falco-sight-alert-console/commit/bbf968365779511567cfa8bb721094e280a4d72e))
+
+
+### Features
+
+* add triggers ([f063371](https://github.com/SabinGhost19/falco-sight-alert-console/commit/f0633717b99aee60f5775e2f99a09f35f3892d20))
+* complete end-to-end integration of backend dynamic correlation properties ([f016919](https://github.com/SabinGhost19/falco-sight-alert-console/commit/f01691940e4e77182ce201fa7b6ac211f184595a))
+* complete end-to-end integration of correlation features on Frontend & wipe HTML comments ([d945731](https://github.com/SabinGhost19/falco-sight-alert-console/commit/d9457310e83facf97387c2b0309fa72f461ed653))
+
 # [1.2.0](https://github.com/SabinGhost19/falco-sight-alert-console/compare/v1.1.6...v1.2.0) (2026-04-06)
 
 
